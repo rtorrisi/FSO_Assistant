@@ -1,1 +1,1 @@
-FSO_Assistant
+FSO_Bot

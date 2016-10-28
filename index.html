@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html >
+  <head>
+
+    <meta charset="UTF-8">
+    <title>Sign-Up/Login Form</title>
+    <link rel='stylesheet' href="css/font.css" type='text/css'>
+    <link rel="stylesheet" href="css/style.css">
+
+  </head>
+
+  <body>
+
+    <div class="form">
+
+      <ul class="tab-group">
+        <li class="tab active"><a href="#login">Log In</a></li>
+        <li class="tab"><a href="#signup">Sign Up</a></li>
+      </ul>
+
+      <div class="tab-content">
+
+        <!-- SIGN UP ################################### -->
+        <div id="signup" style="display: none">
+          <h1>Sign Up Now!</h1>
+
+          <form action="" method="POST">
+
+          <input type="file" name="profile_pic" id="my_file" onchange="readURL(this)" accept="image/gif, image/jpeg, image/png"/>
+          <img id="profilepic" src="img/profile_default.png" onclick="loadFile()"/>
+
+          <div class="top-row">
+            <div class="field-wrap">
+              <label>
+                Name<span class="req">*</span>
+              </label>
+              <input type="text" name="name" required autocomplete="off" />
+            </div>
+
+            <div class="field-wrap">
+              <label>
+                Surname<span class="req">*</span>
+              </label>
+              <input type="text" name="surname" required autocomplete="off"/>
+            </div>
+          </div>
+
+          <div class="field-wrap">
+            <label>
+              Chat ID<span class="req">*</span>
+            </label>
+            <input type="chatid" name="chat_id" required autocomplete="off"/>
+          </div>
+
+          <div class="field-wrap">
+            <label>
+              Username<span class="req">*</span>
+            </label>
+            <input type="username" name="username" required autocomplete="off"/>
+          </div>
+
+          <div class="field-wrap">
+            <label>
+              Password<span class="req">*</span>
+            </label>
+            <input type="password" name="password" required autocomplete="off"/>
+          </div>
+
+          <button type="submit" class="button button-block"/>Sign Up</button>
+
+          </form>
+
+        </div>
+
+        <!-- LOG IN ################################### -->
+        <div id="login">
+          <h1>Welcome Back!</h1>
+          <img id="profilepic" src="img/profile_default.png">
+
+          <form action="" method="post">
+
+            <div class="field-wrap">
+            <label>
+              Username<span class="req">*</span>
+            </label>
+            <input type="username"required autocomplete="off" id="username" onkeyup="checkProfilePic()"/>
+          </div>
+
+          <div class="field-wrap">
+            <label>
+              Password<span class="req">*</span>
+            </label>
+            <input type="password"required autocomplete="off"/>
+          </div>
+
+          <button class="button button-block"/>Log In</button>
+
+          </form>
+      </div>
+
+      </div><!-- tab-content -->
+
+</div> <!-- /form -->
+  </body>
+</html>
+
+<script src="js/form.js"></script>
+<script src="js/index.js"></script>
+<script type="text/javascript">
+  function loadFile() { $("input[id='my_file']").click(); };
+  function checkProfilePic() {
+    alert("qui controllare se username è presente nel db e mostrare l'immagine");
+  }
+  function readURL(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        $('#profilepic').attr('src', e.target.result);
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
