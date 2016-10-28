@@ -34,7 +34,7 @@
         <div id="prove">
           <ul class="tab2-group">
             <li class="tab2 active" id="provet1"><a style="width: 33%" href="#prove1">Calendario Prove</a></li>
-            <li class="tab2" id="provet2"><a style="width: 34%" href="#prove2">Assenze</a></li>
+            <li class="tab2" id="provet2"><a style="width: 34%" href="#prove2" onclick="loadAssenze()">Assenze</a></li>
             <li class="tab2" id="provet3"><a style="width: 33%" href="#prove3">Brani Prove</a></li>
           </ul>
 
@@ -47,31 +47,11 @@
             <div id="prove2" style="display: none"><br>
 
               <div class="field-wrap">
-                <label> Search </label>
-                <input type="search" name="search" required autocomplete="off"/>
+                <label> Search </label> <input type="text" id="search_assenze" required autocomplete="off"/>
               </div>
 
-              <table align="center" border=0>
-        				<tr>
-        					<th> NOME </th><th> COGNOME </th><th> ASSENZE </th>
-        				</tr>
+              <div id="assenze_results"></div>
 
-        					<?php
-                  $sql = "SELECT nome, cognome, assenze FROM Utenti ORDER BY nome";
-                  $result = $conn->query($sql);
-
-                  if($result->num_rows > 0) {
-
-                    while($row = $result->fetch_assoc()) { ?>
-                      <tr>
-                        <td><?php echo $row["nome"]; ?></td>
-                        <td><?php echo $row["cognome"]; ?></td>
-                        <td><?php echo $row["assenze"]; ?></td>
-        						</tr>
-                    <?php
-                    }
-                  } ?>
-              </table>
             </div> <!-- /tab2 assenze-->
 
             <div id="prove3" style="display: none">
@@ -115,10 +95,10 @@
 
         <div id="rubrica" style="display: none"><br>
           <div class="field-wrap">
-            <label> Search </label> <input type="text" id="str" required autocomplete="off"/>
+            <label> Search </label> <input type="text" id="search_rubrica" required autocomplete="off"/>
           </div>
 
-          <div id="search_results"></div>
+          <div id="rubrica_results"></div>
 
         </div> <!-- /rubrica-->
 
@@ -130,16 +110,28 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
     <script type="text/javascript">
       function loadRubrica() {
-        $.post('db_query.php',{value:""}, function(data){
-          $("#search_results").html(data);
+        $.post('db_search.php',{value:"rub"}, function(data){
+          $("#rubrica_results").html(data);
+        });
+      }
+      function loadAssenze() {
+        $.post('db_search.php',{value:"ass"}, function(data){
+          $("#assenze_results").html(data);
         });
       }
 
       $(function() {
-        $("#str").keyup(function(){
-          var value = $("#str").val();
-          $.post('db_query.php',{value:value}, function(data){
-            $("#search_results").html(data);
+        $("#search_rubrica").keyup(function(){
+          var value = $("#search_rubrica").val();
+          $.post('db_search.php',{value:"rub"+value}, function(data){
+            $("#rubrica_results").html(data);
+          });
+        });
+
+        $("#search_assenze").keyup(function(){
+          var value = $("#search_assenze").val();
+          $.post('db_search.php',{value:"ass"+value}, function(data){
+            $("#assenze_results").html(data);
           });
         });
       });
