@@ -201,7 +201,7 @@ input:focus {
   width: 100%;
 }
 
-#profilepic {
+#profile_pic, #show_pic {
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -213,10 +213,25 @@ input:focus {
   -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease;
 }
-input + #profilepic:hover {
+#profile_pic:hover {
   box-shadow: 0 8px 20px 8px rgba(198, 40, 40, 0.5);
 }
 
-#my_file {
+#file {
   display: none;
+}
+
+.success{
+  text-align: center;
+  font-size: 23px;
+  font-weight: 300;
+  margin: 0 0 15px 0;
+	color: #64dd17;
+}
+.error {
+  text-align: center;
+  font-size: 23px;
+  font-weight: 300;
+  margin: 0 0 15px 0;  
+	color: #FF0000;
 }

@@ -22,12 +22,12 @@
 
         <!-- SIGN UP ################################### -->
         <div id="signup" style="display: none">
-          <h1>Sign Up Now!</h1>
+          <div id="sign_up_result"> <h1>Sign Up Now!</h1> </div>
 
-          <form action="" method="POST">
+          <form id="sign_up_form" action="sign_up.php" method="post">
 
-          <input type="file" name="profile_pic" id="my_file" onchange="readURL(this)" accept="image/gif, image/jpeg, image/png"/>
-          <img id="profilepic" src="img/profile_default.png" onclick="loadFile()"/>
+          <input type="file" name="file_attach[]" id="file" onchange="readURL(this)" accept="image/gif, image/jpeg, image/png"/>
+          <img id="profile_pic" src="img/profile_default.png" onclick="loadFile()"/>
 
           <div class="top-row">
             <div class="field-wrap">
@@ -75,7 +75,7 @@
         <!-- LOG IN ################################### -->
         <div id="login">
           <h1>Welcome Back!</h1>
-          <img id="profilepic" src="img/profile_default.png">
+          <img id="show_pic" src="img/profile_default.png">
 
           <form action="" method="post">
 
@@ -106,18 +106,5 @@
 
 <script src="js/form.js"></script>
 <script src="js/index.js"></script>
-<script type="text/javascript">
-  function loadFile() { $("input[id='my_file']").click(); };
-  function checkProfilePic() {
-    alert("qui controllare se username è presente nel db e mostrare l'immagine");
-  }
-  function readURL(input) {
-    if (input.files && input.files[0]) {
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        $('#profilepic').attr('src', e.target.result);
-      };
-      reader.readAsDataURL(input.files[0]);
-    }
-  }
-</script>
+<script src="js/login_signup.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
