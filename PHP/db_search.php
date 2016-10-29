@@ -12,26 +12,29 @@ switch ($searchType) {
   //########################################################
   case 'ass':
   $sql = "
-    SELECT nome, cognome, assenze
+    SELECT idUtente, nome, cognome, assenze
     FROM Utenti
     WHERE nome LIKE '" .$value. "%' OR cognome LIKE '" .$value. "%' ORDER by NOME";
   $result = $conn->query($sql);
 
   echo '
   <tr>
-    <th> NOME </th><th> COGNOME </th><th> ASSENZE </th>
+    <th> ID UTENTE </th><th> NOME </th><th> COGNOME </th><th colspan="3"> ASSENZE </th>
   </tr>';
 
   if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
       echo '
       <tr>
+        <td>'.$row["idUtente"].'</td>
         <td>'.$row["nome"].'</td>
         <td>'.$row["cognome"].'</td>
+        <td><button id="'.$value.'" onclick="subAssenza(this, '.$row["idUtente"].')"> - </button></td>
         <td>'.$row["assenze"].'</td>
+        <td><button id="'.$value.'" onclick="addAssenza(this, '.$row["idUtente"].')"> + </button></td>
       </tr>';
     }
-  } else { echo '<tr><td colspan="3">Nessun risultato trovato. </td></tr>'; }
+  } else { echo '<tr><td colspan="6">Nessun risultato trovato. </td></tr>'; }
   break;
 
   //########################################################
