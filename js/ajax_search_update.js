@@ -1,12 +1,12 @@
 function addAssenza(but, id) {
   var search = $(but).attr('id');
-  $.post('PHP/db_updateAssenze.php',{value:"addA,"+search+","+id}, function(data){
+  $.post('PHP/db_updateAbsences.php',{value:"addA,"+search+","+id}, function(data){
     $("#assenze_results").html(data);
   });
 }
 function subAssenza(but, id) {
   var search = $(but).attr('id');
-  $.post('PHP/db_updateAssenze.php',{value:"subA,"+search+","+id}, function(data){
+  $.post('PHP/db_updateAbsences.php',{value:"subA,"+search+","+id}, function(data){
     $("#assenze_results").html(data);
   });
 }
