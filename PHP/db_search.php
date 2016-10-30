@@ -1,5 +1,6 @@
 <?php
 
+$MAX_ASSENZE = 5;
 $conn = mysqli_connect("localhost", "root", "admin", "FSO_Database") or die("Errore connessione database");
 
 $mess = $_POST['value'];
@@ -29,9 +30,14 @@ switch ($searchType) {
         <td>'.$row["idUtente"].'</td>
         <td>'.$row["nome"].'</td>
         <td>'.$row["cognome"].'</td>
-        <td><button id="'.$value.'" onclick="subAssenza(this, '.$row["idUtente"].')"> - </button></td>
-        <td>'.$row["assenze"].'</td>
-        <td><button id="'.$value.'" onclick="addAssenza(this, '.$row["idUtente"].')"> + </button></td>
+        <td><button id="'.$value.'" onclick="subAssenza(this, '.$row["idUtente"].')"> - </button></td>';
+        if($row["assenze"]>$MAX_ASSENZE){
+          echo '<td style="color:red">'.$row["assenze"].'</td>';
+        }
+        else {
+          echo '<td>'.$row["assenze"].'</td>';
+        }
+        echo '<td><button id="'.$value.'" onclick="addAssenza(this, '.$row["idUtente"].')"> + </button></td>
       </tr>';
     }
   } else { echo '<tr><td colspan="6">Nessun risultato trovato. </td></tr>'; }

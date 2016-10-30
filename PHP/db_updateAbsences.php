@@ -1,5 +1,5 @@
 <?php
-
+$MAX_ASSENZE = 5;
 $conn = mysqli_connect("localhost", "root", "admin", "FSO_Database") or die("Errore connessione database");
 
 $mess = $_POST['value'];
@@ -15,10 +15,9 @@ switch ($updateType) {
   case 'addA':
   $sql = "UPDATE Utenti
   SET assenze = assenze + 1
-  WHERE idUtente = '".$target."'
-  ";
+  WHERE idUtente = '".$target."'";
 
-  if ($conn->query($sql) === TRUE) {
+  $conn->query($sql);
 
     $sql = "
       SELECT idUtente, nome, cognome, assenze
@@ -39,23 +38,26 @@ switch ($updateType) {
           <td>'.$row["idUtente"].'</td>
           <td>'.$row["nome"].'</td>
           <td>'.$row["cognome"].'</td>
-          <td><button id="'.$search.'" onclick="subAssenza(this, '.$row["idUtente"].')"> - </button></td>
-          <td>'.$row["assenze"].'</td>
-          <td><button id="'.$search.'" onclick="addAssenza(this, '.$row["idUtente"].')""> + </button></td>
+          <td><button id="'.$search.'" onclick="subAssenza(this, '.$row["idUtente"].')"> - </button></td>';
+          if($row["assenze"]>$MAX_ASSENZE){
+            echo '<td style="color:red">'.$row["assenze"].'</td>';
+          }
+          else {
+            echo '<td>'.$row["assenze"].'</td>';
+          }
+          echo '<td><button id="'.$search.'" onclick="addAssenza(this, '.$row["idUtente"].')""> + </button></td>
         </tr>';
       }
     }
-  }
   break;
 
   //########################################################
   case 'subA':
   $sql = "UPDATE Utenti
   SET assenze = assenze - 1
-  WHERE idUtente = '".$target."'
-  ";
+  WHERE idUtente = '".$target."'";
 
-  if ($conn->query($sql) === TRUE) {
+  $conn->query($sql);
 
     $sql = "
       SELECT idUtente, nome, cognome, assenze
@@ -76,13 +78,17 @@ switch ($updateType) {
           <td>'.$row["idUtente"].'</td>
           <td>'.$row["nome"].'</td>
           <td>'.$row["cognome"].'</td>
-          <td><button id="'.$search.'" onclick="subAssenza(this, '.$row["idUtente"].')"> - </button></td>
-          <td>'.$row["assenze"].'</td>
-          <td><button id="'.$search.'" onclick="addAssenza(this, '.$row["idUtente"].')""> + </button></td>
+          <td><button id="'.$search.'" onclick="subAssenza(this, '.$row["idUtente"].')"> - </button></td>';
+          if($row["assenze"]>$MAX_ASSENZE){
+            echo '<td style="color:red">'.$row["assenze"].'</td>';
+          }
+          else {
+            echo '<td>'.$row["assenze"].'</td>';
+          }
+          echo '<td><button id="'.$search.'" onclick="addAssenza(this, '.$row["idUtente"].')""> + </button></td>
         </tr>';
       }
     }
-  }
   break;
 }
 

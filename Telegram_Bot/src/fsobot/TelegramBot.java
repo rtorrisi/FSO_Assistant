@@ -63,14 +63,13 @@ public class TelegramBot extends TelegramLongPollingBot {
                     String mess = message.getText().toLowerCase();
                     
                     if(mess.contains("menu")) sendMessage("Seleziona una delle voci dal menù", getMainMenuKeyboard(), chatID);
-                    
+                    else if(mess.contains("profilo")) sendProfile(username, chatID);
                     // INFO #################################################
                     else if(mess.contains("info")) sendMessage("Seleziona una delle voci dal menù", getInfoKeyboard(), chatID);
                     
                     else if(mess.contains("concerti")) sendMessage("Seleziona una delle voci dal menù", getConcertsKeyboard(), chatID);
                     //else if(mess.contains("tutti gli eventi"))
                     //else if(mess.contains("prossimi eventi"))
-                    
                     //else if(mess.contains("brani prova"))
                     
                     else if(mess.contains("rubrica")) sendRubrica(chatID);
@@ -82,16 +81,24 @@ public class TelegramBot extends TelegramLongPollingBot {
                     else if(mess.contains("sito web")) sendMessage("www.freesoundstudies.it", chatID);
                     //##########################################################
                     
-                    // RITARDO #################################################
+                    // ASSENZA E RITARDO #######################################
+                    else if(mess.contains("assenza")) {
+                        sendAbsence(username, chatID);
+                        sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha segnalato che mancherà alle prove! 🚨");
+                    }
+                    else if(mess.contains("annulla_segnalazione")) {
+                        removeAbsence(username, chatID);
+                        sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha rimosso la segnalazione di assenza! 🚨");
+                    }
                     else if(mess.contains("ritardo")) sendMessage("Desideri aggiungere l'orario previsto di arrivo?", getRitardoKeyboard(), chatID);
                     else if(mess.contains("non aggiungere orario")) {
-                        sendMessageToAdmin(nome+" "+cognome+" ha segnalato che ritarderà alle prove");
-                        sendMessage("Ritardo segnalato!", getMainMenuKeyboard(), chatID);
+                        sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha segnalato che ritarderà alle prove! 🚨");
+                        sendMessage("Ritardo segnalato! 👍", getMainMenuKeyboard(), chatID);
                     }
                     else if(mess.contains("aggiungi orario")) sendMessage("Inserisci l'orario previsto di arrivo", getOraRitardoKeyboard(),chatID);         
                     else if(mess.contains("ore")) {
-                        sendMessageToAdmin(nome+" "+cognome+" ha segnalato che ritarderà alle prove alle "+mess);
-                        sendMessage("Orario ritardo segnalato!\n\nHo avvisato che arriverai alle "+mess, getMainMenuKeyboard(), chatID);
+                        sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha segnalato che arriverà alle prove alle "+mess+"! 🚨");
+                        sendMessage("Orario ritardo segnalato con successo! 👍\n\nHo avvisato che arriverai alle "+mess, getMainMenuKeyboard(), chatID);
                     }
                     //##########################################################
                     
@@ -114,7 +121,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendMessageRequest.setText(text);
             try { sendMessage(sendMessageRequest);
             } catch (TelegramApiException e) {}
-	}
+    }
     public void sendMessage(String text, ReplyKeyboardMarkup keyboard, String chat_id) {
             SendMessage sendMessageRequest = new SendMessage();
             sendMessageRequest.setChatId(chat_id);
@@ -122,10 +129,10 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendMessageRequest.setReplyMarkup(keyboard);
             try { sendMessage(sendMessageRequest);
             } catch (TelegramApiException e) {}
-	}
+    }
     public void sendMessageToAdmin(String text) {
             
-            ResultSet rs = database.getQueryResult("select chat_id from admin");
+            ResultSet rs = database.getQueryResult("SELECT chat_id from Admin");
             try {
                 while(rs.next()) {
                     SendMessage sendMessageRequest = new SendMessage();
@@ -134,8 +141,59 @@ public class TelegramBot extends TelegramLongPollingBot {
                     sendMessage(sendMessageRequest);
                 }
             } catch(SQLException e) {} catch (TelegramApiException e) {}
-	}
-        
+    }
+    
+    public void sendProfile(String username, String chatID) {
+        String ans="Profilo di ";
+            
+        PreparedStatement ps;
+        try {
+            ps = database.getConnection().prepareStatement("SELECT nome, cognome, assenze FROM Utenti WHERE username=? AND chat_id=?");
+            ps.setString(1, username);
+	    ps.setString(2, chatID);
+                
+	    ResultSet rs = ps.executeQuery();
+            rs.next();
+            ans += rs.getString("nome") + " "+ rs.getString("cognome") + "\n\n";
+            ans += "Assenze fatte: " + rs.getInt("assenze") + "\n";
+            ans += "Assenze rimanenti: " + (MAX_ASSENZE - rs.getInt("assenze"));
+        } catch(SQLException e) { e.printStackTrace();}
+                        
+        sendMessage(ans, getMainMenuKeyboard(), chatID);
+    }
+    public void sendAbsence(String username, String chatID) {
+        String ans="Assenza";
+            
+        PreparedStatement ps;
+        try {
+            ps = database.getConnection().prepareStatement("UPDATE Utenti SET assenze=assenze+1 WHERE username=? AND chat_id=?");
+            ps.setString(1, username);
+	    ps.setString(2, chatID);
+                
+	    if(ps.executeUpdate() == 1) ans+=" inviata con successo! 👍\n\n/annulla_segnalazione per annullare l'assenza segnalata!";
+            ps.close();
+            
+        } catch(SQLException e) { ans+= " NON inviata con successo! 👎";}
+                        
+        sendMessage(ans, getMainMenuKeyboard(), chatID);
+    }
+    public void removeAbsence(String username, String chatID) {
+        String ans="Assenza";
+            
+        PreparedStatement ps;
+        try {
+            ps = database.getConnection().prepareStatement("UPDATE Utenti SET assenze=assenze-1 WHERE username=? AND chat_id=?");
+            ps.setString(1, username);
+	    ps.setString(2, chatID);
+                
+	    if(ps.executeUpdate() == 1) ans+=" rimossa con successo! 👍";
+            ps.close();
+            
+        } catch(SQLException e) { ans+= " NON rimossa con successo! 👎";}
+                        
+        sendMessage(ans, getMainMenuKeyboard(), chatID);
+    }
+    
     public void saveImage(List<PhotoSize> photos) {
             
             try {
@@ -169,8 +227,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendPhotoRequest.setChatId(chat_id);
             sendPhotoRequest.setPhoto(image_id);
             sendPhoto(sendPhotoRequest);
-	}
-        
+	}        
     public void sendDocumentById(String chat_id, String file_id) {
             SendDocument sendDocumentRequest = new SendDocument();
             sendDocumentRequest.setChatId(chat_id);
@@ -187,14 +244,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             } catch(SQLException e) {}
                         
             sendMessage(ans, getInfoKeyboard(),chatID);
-    }
-    
-    private String getLastWord(String str) {
-        int i=str.length()-1;
-        while(i>=0 && str.charAt(i)!=' ') i--;
-        return i<str.length()-2?str.substring(i+1):"";
-    }
-    
+    }    
     private void sendUsersNumber(String mess, String chatID) {
             String data = getLastWord(mess);
             String ans="";
@@ -211,7 +261,14 @@ public class TelegramBot extends TelegramLongPollingBot {
                         
             sendMessage(ans, getMainMenuKeyboard(), chatID);
     }
-        
+    
+    private String getLastWord(String str) {
+        int i=str.length()-1;
+        while(i>=0 && str.charAt(i)!=' ') i--;
+        return i<str.length()-2?str.substring(i+1):"";
+    }
+    
+    
     private static ReplyKeyboardMarkup getMainMenuKeyboard() {
             ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
             replyKeyboardMarkup.setSelective(true);
@@ -332,7 +389,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     public static final String BOT_USERNAME = "freesoundorchestra_bot";
     public static final String BOT_TOKEN = "174341771:AAGK6plXw0OW6FeHF3WPiyMtvUzzVau3wNg";
     private static final Database database = new Database();
-    //private static final int MAX_ASSENZE = 5;
+    private static final int MAX_ASSENZE = 5;
 }
 
 //🎹🎷🎺🎸🎻
