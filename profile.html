@@ -51,7 +51,25 @@
         </div><!-- /prove-->
 
         <div id="news" style="display: none">
-          <h1>News!</h1>
+          <div id="news_result"> <h1>Send News!</h1> </div>
+
+          <form id="news_form" action="sendNews.php" method="post">
+            <div style="float: left">
+              <div class="field-wrap">
+                <label> News <span class="req">*</span> </label>
+                <textarea name="message"></textarea>
+              </div>
+            </div>
+            <div style="float: right">
+              <div class="field-wrap">
+                <label style="transform: translateY(-27px); color: white">&nbsp &nbsp &nbsp &nbsp File/Photo </label>
+                <input type="file" name="file_attach[]" id="file" onchange="readURL(this)"/>
+                <img id="news_pic" src="img/test.jpg" onclick="loadFile()"/>
+              </div>
+            </div>
+                <button type="submit" class="button button-block"/>Send News</button>
+          </form>
+
         </div>
 
         <div id="basi" style="display: none">
@@ -96,7 +114,8 @@
 
     <script src="js/form.js"></script>
     <script src="js/index.js"></script>
+    <script src="js/sendNews.js"></script>
     <script src="js/ajax_search_update.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
   </body>
 </html>
