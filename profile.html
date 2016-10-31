@@ -51,9 +51,10 @@
         </div><!-- /prove-->
 
         <div id="news" style="display: none">
-          <div id="news_result"> <h1>Send News!</h1> </div>
+          <div id="news_result"> <h1>Invia News!</h1> </div>
 
           <form id="news_form" action="sendNews.php" method="post">
+
             <div style="float: left">
               <div class="field-wrap">
                 <label> News <span class="req">*</span> </label>
@@ -62,12 +63,19 @@
             </div>
             <div style="float: right">
               <div class="field-wrap">
-                <label style="transform: translateY(-27px); color: white">&nbsp &nbsp &nbsp &nbsp File/Photo </label>
+                <label style="transform: translateY(-27px); color: white">&nbsp &nbsp &nbsp &nbsp File/Foto </label>
                 <input type="file" name="file_attach[]" id="file" onchange="readURL(this)"/>
                 <img id="news_pic" src="img/test.jpg" onclick="loadFile()"/>
               </div>
             </div>
-                <button type="submit" class="button button-block"/>Send News</button>
+            <div style="field-wrap">
+              <select name="type">
+                <option value="text">Testo</option>
+                <option value="image">Testo + Immagine</option>
+                <option value="file">Testo + File</option>
+            </select>
+          </div><br>
+                <button type="submit" class="button button-block"/>Invia News</button>
           </form>
 
         </div>
