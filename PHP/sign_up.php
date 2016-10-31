@@ -1,6 +1,6 @@
 <?php
 
-$conn = mysqli_connect("localhost", "root", "admin", "FSO_Database") or die("error");
+$conn = mysqli_connect("localhost", "root", "admin", "FSO_Database") or die("Errore connessione database");
 
 if($_POST){
 

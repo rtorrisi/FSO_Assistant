@@ -1,8 +1,9 @@
-*.conf
 *.mysql
 *.sql
 *.png
+*.conf
 *.jpg
+*.pdf
 *.gif
 *.class
 /_OLD

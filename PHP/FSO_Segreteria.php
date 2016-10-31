@@ -8,7 +8,6 @@
 		<br><h1 align="center"><a href="FSO_Segreteria.php" style="color:white">FS ORCHESTRA ASSISTANT</a></h1>
 
 	 <?php
-		 $botToken = "174341771:AAGK6plXw0OW6FeHF3WPiyMtvUzzVau3wNg";
 		 $botUrl = "https://api.telegram.org/bot".$botToken;
 		 $updateCommand = file_get_contents($botUrl."/getupdates?limit=1");
 		 $updateArray = json_decode($updateCommand, TRUE);
