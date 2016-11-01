@@ -1,7 +1,7 @@
 <?php
+include 'db_connection.php';
 
 $MAX_ASSENZE = 5;
-$conn = mysqli_connect("localhost", "root", "admin", "FSO_Database") or die("Errore connessione database");
 
 $mess = $_POST['value'];
 $searchType = substr($mess, 0, 3);

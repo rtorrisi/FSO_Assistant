@@ -1,9 +1,6 @@
 <?php
-
-$file = file("../token.conf");
-$token = explode("|", $file[0]);
-$botUrl = "https://api.telegram.org/bot".$token[0]."/";
-$conn = mysqli_connect("localhost", "root", "admin", "FSO_Database") or die("Errore connessione database");
+include 'db_connection.php';
+include 'bot_info.php';
 
 if($_POST){
 

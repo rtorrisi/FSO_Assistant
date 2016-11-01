@@ -63,16 +63,16 @@
             </div>
             <div style="float: right">
               <div class="field-wrap">
-                <label style="transform: translateY(-27px); color: white">&nbsp &nbsp &nbsp &nbsp File/Foto </label>
+                <label id="file_info" style="transform: translateY(-27px); color: white">&nbsp &nbsp &nbsp &nbsp File/Foto </label>
                 <input type="file" name="file_attach[]" id="file" onchange="readURL(this)"/>
-                <img id="news_pic" src="img/test.jpg" onclick="loadFile()"/>
+                <img id="news_pic" src="img/file_image.png" onclick="loadFile()"/>
               </div>
             </div>
             <div style="field-wrap">
               <select name="type">
                 <option value="text">Testo</option>
-                <option value="image">Testo + Immagine</option>
-                <option value="file">Testo + File</option>
+                <option value="image">Immagine</option>
+                <option value="file">File</option>
             </select>
           </div><br>
                 <button type="submit" class="button button-block"/>Invia News</button>

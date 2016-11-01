@@ -1,11 +1,22 @@
 function loadFile() { $("input[id='file']").click(); };
+
 function readURL(input) {
   if (input.files && input.files[0]) {
+    if (input.files[0].name.match(/\.(jpg|jpeg|png)$/)) {
     var reader = new FileReader();
     reader.onload = function (e) {
       $('#news_pic').attr('src', e.target.result);
     };
     reader.readAsDataURL(input.files[0]);
+  }
+  else { //se non un immagine
+      $('#news_pic').attr('src', "img/file_image.png");
+  }
+
+  $("#file_info").html(input.files[0].name);
+  setTimeout(function() {
+    $("#file_info").html("&nbsp &nbsp &nbsp &nbsp File/Foto");
+  }, 2000);
   }
 }
 

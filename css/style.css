@@ -175,6 +175,10 @@ input:focus, textarea:hover, select:hover {
   outline: 0;
   box-shadow: 0 4px 4px 4px rgba(198, 40, 40, 0.5);
 }
+option {
+  background-color: #c62828;
+  color: white;
+}
 
 .field-wrap {
   position: relative;
