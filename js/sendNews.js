@@ -10,7 +10,7 @@ function readURL(input) {
     reader.readAsDataURL(input.files[0]);
   }
   else { //se non un immagine
-      $('#news_pic').attr('src', "img/file_image.png");
+      $('#news_pic').attr('src', "img/file_default.png");
   }
 
   $("#file_info").html(input.files[0].name);
