@@ -64,12 +64,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                 {
                     String mess = message.getText().toLowerCase();
 
-                    if(mess.contains("menu")) sendMessage("Seleziona una delle voci dal menù", getMainMenuKeyboard(), chatID);
+                    if(mess.contains("menu")) sendMessage("Menù principale:", getMainMenuKeyboard(), chatID);
                     else if(mess.contains("profilo")) sendProfile(username, chatID);
                     // INFO #################################################
-                    else if(mess.contains("info")) sendMessage("Seleziona una delle voci dal menù", getInfoKeyboard(), chatID);
+                    else if(mess.contains("info")) sendMessage("Menù informazioni:", getInfoKeyboard(), chatID);
 
-                    else if(mess.contains("concerti")) sendMessage("Seleziona una delle voci dal menù", getConcertsKeyboard(), chatID);
+                    else if(mess.contains("concerti")) sendMessage("Menù concerti:", getConcertsKeyboard(), chatID);
                     //else if(mess.contains("tutti gli eventi"))
                     //else if(mess.contains("prossimi eventi"))
                     //else if(mess.contains("brani prova"))
@@ -80,7 +80,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
                     else if(mess.contains("facebook")) sendMessage("www.facebook.com/FreeSoundStudiesMusicAcademy", chatID);
                     else if(mess.contains("youtube")) sendMessage("www.youtube.com/user/FreeSoundStudies", chatID);
-                    else if(mess.contains("sito web")) sendMessage("www.freesoundstudies.it", chatID);
+                    else if(mess.contains("sito")) sendMessage("www.freesoundstudies.it", chatID);
                     //##########################################################
 
                     // ASSENZA E RITARDO #######################################
@@ -285,7 +285,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     keyboard2Row.add("🅰 Segnala Assenza");
                     keyboard2Row.add("🕗 Segnala Ritardo");
                 KeyboardRow keyboard3Row = new KeyboardRow();
-                    keyboard3Row.add("🎧 Basi .mp3");
+                    keyboard3Row.add("🎧 Basi");
                     keyboard3Row.add("📰 News");
                     keyboard3Row.add("📎 Info");
 
@@ -314,7 +314,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             KeyboardRow keyboard3Row = new KeyboardRow();
                 keyboard3Row.add("👥 Facebook");
                 keyboard3Row.add("🎥 YouTube");
-                keyboard3Row.add("🌐 Sito Web");
+                keyboard3Row.add("🌐 Sito");
 
             keyboard.add(keyboardMenuRow);
             keyboard.add(keyboard1Row);

@@ -7,9 +7,10 @@ if($_POST){
     $type = $_POST['type'];
     $message = $_POST['message'];
 
+    $file_to_db = addslashes(file_get_contents($_FILES['file_attach']['tmp_name'][0]));
     $info = pathinfo($_FILES['file_attach']['name'][0]);
     $ext = $info['extension'];
-    $target = '../img/file.'.$ext;
+    $target = '../Data/website_img/file.'.$ext;
     move_uploaded_file($_FILES['file_attach']['tmp_name'][0], $target);
     $sended=1;
 
@@ -21,10 +22,14 @@ if($_POST){
             $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message));
             if(strlen($result)==0) $sended=0;
           }
+
+          $sql = "INSERT INTO News (news, Admin_username)
+          VALUES ('$message', 'rtorrisi')";
+          $conn->query($sql);
       }
 
       else if($type=="image") {
-        $img = curl_file_create('../img/file.'.$ext);
+        $img = curl_file_create('../Data/website_img/file.'.$ext);
 
         $sql = "SELECT chat_id FROM Utenti";
         $rs = $conn->query($sql);
@@ -60,10 +65,14 @@ if($_POST){
 
           $count++;
         }
+
+        $sql = "INSERT INTO News (news, allegato, estensione, Admin_username)
+        VALUES ('$message', '$file_to_db', '$ext', 'rtorrisi')";
+        $conn->query($sql);
       }
 
       else {
-        $file = curl_file_create('../img/file.'.$ext);
+        $file = curl_file_create('../Data/website_img/file.'.$ext);
 
         $sql = "SELECT chat_id FROM Utenti";
         $rs = $conn->query($sql);
@@ -99,6 +108,10 @@ if($_POST){
 
           $count++;
         }
+
+        $sql = "INSERT INTO News (news, allegato, estensione, Admin_username)
+        VALUES ('$message', '$file_to_db', '$ext', 'rtorrisi')";
+        $conn->query($sql);
       }
 
       //controllo errori durante i trasferimenti

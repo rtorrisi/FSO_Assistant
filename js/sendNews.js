@@ -10,13 +10,10 @@ function readURL(input) {
     reader.readAsDataURL(input.files[0]);
   }
   else { //se non un immagine
-      $('#news_pic').attr('src', "img/file_default.png");
+      $('#news_pic').attr('src', "Data/website_img/file_default.png");
   }
 
-  $("#file_info").html(input.files[0].name);
-  setTimeout(function() {
-    $("#file_info").html("&nbsp &nbsp &nbsp &nbsp File/Foto");
-  }, 2000);
+  $("#file_name_loaded").html("File caricato: "+input.files[0].name);
   }
 }
 

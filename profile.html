@@ -51,32 +51,50 @@
         </div><!-- /prove-->
 
         <div id="news" style="display: none">
-          <div id="news_result"> <h1>Invia News!</h1> </div>
 
-          <form id="news_form" action="sendNews.php" method="post">
+            <ul class="tab2-group">
+              <li class="tab2" id="newst1"><a style="width: 50%" href="#news1">Invia news</a></li>
+              <li class="tab2" id="newst2"><a style="width: 50%" href="#news2">Visualizza news</a></li>
+            </ul>
 
-            <div style="float: left">
-              <div class="field-wrap">
-                <label> News <span class="req">*</span> </label>
-                <textarea name="message"></textarea>
+            <div class="tab2-content">
+
+              <div id="news1" style="display: none">
+                <div id="news_result"> <h1>Invia News!</h1> </div>
+
+                <form id="news_form" action="sendNews.php" method="post">
+
+                  <div style="float: left">
+                    <div class="field-wrap">
+                      <label> News <span class="req">*</span> </label>
+                      <textarea name="message"></textarea>
+                    </div>
+                  </div>
+                  <div style="float: right">
+                    <div class="field-wrap">
+                      <label id="file_info" style="transform: translateY(-27px); color: white">&nbsp &nbsp &nbsp &nbsp File/Foto </label>
+                      <input type="file" name="file_attach[]" id="file" onchange="readURL(this)"/>
+                      <img id="news_pic" src="Data/website_img/file_default.png" onclick="loadFile()"/>
+                    </div>
+                  </div>
+                  <div style="field-wrap">
+                    <select name="type">
+                      <option value="text">Testo</option>
+                      <option value="image">Immagine</option>
+                      <option value="file">File</option>
+                  </select>
+                </div><br>
+                <div id="file_name_loaded">File caricato: nessuno </div><br>
+
+                      <button type="submit" class="button button-block"/>Invia News</button>
+                </form>
               </div>
-            </div>
-            <div style="float: right">
-              <div class="field-wrap">
-                <label id="file_info" style="transform: translateY(-27px); color: white">&nbsp &nbsp &nbsp &nbsp File/Foto </label>
-                <input type="file" name="file_attach[]" id="file" onchange="readURL(this)"/>
-                <img id="news_pic" src="img/file_default.png" onclick="loadFile()"/>
+
+              <div id="news2" style="display: none">
+                <h1> Visualizza News! </h1>
               </div>
-            </div>
-            <div style="field-wrap">
-              <select name="type">
-                <option value="text">Testo</option>
-                <option value="image">Immagine</option>
-                <option value="file">File</option>
-            </select>
-          </div><br>
-                <button type="submit" class="button button-block"/>Invia News</button>
-          </form>
+
+            </div> <!-- /tab2-content-->
 
         </div>
 
@@ -85,30 +103,10 @@
         </div>
 
         <div id="concerti" style="display: none">
-          <ul class="tab2-group">
-            <li class="tab2" id="concertit1"><a style="width: 33%" href="#concerti1">A</a></li>
-            <li class="tab2" id="concertit2"><a style="width: 34%" href="#concerti2">B</a></li>
-            <li class="tab2" id="concertit3"><a style="width: 33%" href="#concerti3">C</a></li>
-          </ul>
-
-          <div class="tab2-content">
-
-            <div id="concerti1" style="display: none">
-              <h1>A</h1>
-            </div>
-
-            <div id="concerti2" style="display: none">
-              <h1>B</h1>
-            </div>
-
-            <div id="concerti3" style="display: none">
-              <h1>C</h1>
-            </div>
-
-          </div> <!-- /tab2-content-->
+          <h1> Concerti! </h1>
         </div> <!-- /concerti-->
 
-        <div id="rubrica" style="display: none"><br>
+        <div id="rubrica" style="display: none">
           <div class="field-wrap">
             <label> Search </label> <input type="text" id="search_rubrica" required autocomplete="off"/>
           </div>

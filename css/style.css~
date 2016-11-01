@@ -6,7 +6,7 @@ html { overflow-y: scroll; }
 
 body {
   background: #a09b98;
-  background-image: url('../img/test.jpg');
+  background-image: url('../Data/website_img/test.jpg');
   font-family: 'Titillium Web', sans-serif;
 }
 

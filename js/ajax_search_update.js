@@ -28,9 +28,9 @@ $(function() {
           $.post('PHP/db_search.php',{value:"rub"+value}, function(data){
             $("#rubrica_results").html(data);
           });
-});
+        });
 
-$("#search_assenze").keyup(function(){
+        $("#search_assenze").keyup(function(){
           var value = $("#search_assenze").val();
           $.post('PHP/db_search.php',{value:"ass"+value}, function(data){
             $("#assenze_results").html(data);
