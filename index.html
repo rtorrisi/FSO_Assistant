@@ -25,78 +25,68 @@
           <div id="sign_up_result"> <h1>Sign Up Now!</h1> </div>
 
           <form id="sign_up_form" action="sign_up.php" method="post">
-
-          <input type="file" name="file_attach[]" id="file" onchange="readURL(this)" accept="image/gif, image/jpeg, image/png"/>
-          <img id="profile_pic" src="Data/website_img/profile_default.png" onclick="loadFile()"/>
-
-          <div class="top-row">
-            <div class="field-wrap">
-              <label>
-                Name<span class="req">*</span>
-              </label>
-              <input type="text" name="name" required autocomplete="off" />
-            </div>
-
-            <div class="field-wrap">
-              <label>
+            <input type="file" name="file_attach[]" id="file" onchange="readURL(this)" accept="image/gif, image/jpeg, image/png"/>
+            <img id="profile_pic" src="Data/website_img/profile_default.png" onclick="loadFile()"/>
+            <div class="top-row">
+              <div class="field-wrap">
+                <label>
+                  Name<span class="req">*</span>
+                </label>
+                <input type="text" name="name" required autocomplete="off" />
+              </div>
+              <div class="field-wrap">
+                <label>
                 Surname<span class="req">*</span>
-              </label>
-              <input type="text" name="surname" required autocomplete="off"/>
+                </label>
+                <input type="text" name="surname" required autocomplete="off"/>
+              </div>
             </div>
-          </div>
-
-          <div class="field-wrap">
-            <label>
-              Chat ID<span class="req">*</span>
-            </label>
-            <input type="chatid" name="chat_id" required autocomplete="off"/>
-          </div>
-
-          <div class="field-wrap">
-            <label>
-              Username<span class="req">*</span>
-            </label>
-            <input type="username" name="username" required autocomplete="off"/>
-          </div>
-
-          <div class="field-wrap">
-            <label>
-              Password<span class="req">*</span>
-            </label>
-            <input type="password" name="password" required autocomplete="off"/>
-          </div>
-
-          <button type="submit" class="button button-block"/>Sign Up</button>
-
+            <div class="field-wrap">
+              <label>
+                Chat ID<span class="req">*</span>
+              </label>
+              <input type="chatid" name="chat_id" required autocomplete="off"/>
+            </div>
+            <div class="field-wrap">
+              <label>
+                Username<span class="req">*</span>
+              </label>
+              <input type="username" name="username" required autocomplete="off"/>
+            </div>
+            <div class="field-wrap">
+              <label>
+                Password<span class="req">*</span>
+              </label>
+              <input type="password" name="password" required autocomplete="off"/>
+            </div>
+            <button type="submit" class="button button-block"/>Sign Up</button>
           </form>
 
         </div>
 
         <!-- LOG IN ################################### -->
         <div id="login">
-          <h1>Welcome Back!</h1>
+          <div id="log_in_result"> <h1>Welcome Back!</h1> </div>
+
           <img id="show_pic" src="Data/website_img/profile_default.png">
 
-          <form action="" method="post">
-
+          <form id="log_in_form" action="log_in.php" method="post">
             <div class="field-wrap">
-            <label>
-              Username<span class="req">*</span>
-            </label>
-            <input type="username"required autocomplete="off" id="username" onkeyup="checkProfilePic()"/>
-          </div>
-
-          <div class="field-wrap">
-            <label>
-              Password<span class="req">*</span>
-            </label>
-            <input type="password"required autocomplete="off"/>
-          </div>
-
-          <button class="button button-block"/>Log In</button>
-
+              <label>
+                Username<span class="req">*</span>
+              </label>
+              <input type="username" name="username" required autocomplete="off" id="username" onkeyup="checkProfilePic()"/>
+            </div>
+            <div class="field-wrap">
+              <label>
+                Password<span class="req">*</span>
+              </label>
+              <input type="password" name="password" required autocomplete="off"/>
+            </div>
+            <button type="submit" class="button button-block"/>Sign Up</button>
           </form>
-      </div>
+
+        </div>
 
       </div><!-- tab-content -->
 
