@@ -29,7 +29,7 @@ switch ($updateType) {
 
     echo '
     <tr>
-      <th> ID UTENTE </th><th> NOME </th><th> COGNOME </th><th colspan="3"> ASSENZE </th>
+      <th> ID </th><th> NOME </th><th> COGNOME </th><th colspan="3"> ASSENZE </th>
     </tr>';
 
     if ($result->num_rows > 0) {
@@ -69,7 +69,7 @@ switch ($updateType) {
 
     echo '
     <tr>
-      <th> ID UTENTE </th><th> NOME </th><th> COGNOME </th><th colspan="3"> ASSENZE </th>
+      <th> ID </th><th> NOME </th><th> COGNOME </th><th colspan="3"> ASSENZE </th>
     </tr>';
 
     if ($result->num_rows > 0) {

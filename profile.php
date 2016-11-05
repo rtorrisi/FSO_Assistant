@@ -1,3 +1,18 @@
+<?php
+include 'PHP/db_connection.php';
+
+session_start();
+$user = $_SESSION['username'];
+if(!isset($user)) header("Location: index.php");
+
+$sql = mysqli_query($conn,"SELECT * FROM Admin WHERE username='$user' ");
+$row=mysqli_fetch_array($sql);
+$login_username = $row['username'];
+$login_name = $row['nome'];
+$login_surname = $row['cognome'];
+$login_chatid = $row['chat_id'];
+?>
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -11,11 +26,12 @@
     <div class="form" style="max-width: 600px">
 
       <ul class="tab-group">
-        <li class="tab active"><a style="width: 20%" href="#prove">Prove</a></li>
-        <li class="tab"><a style="width: 20%" href="#news">News</a></li>
-        <li class="tab"><a style="width: 20%" href="#basi">Basi</a></li>
-        <li class="tab"><a style="width: 20%" href="#concerti">Concerti</a></li>
-        <li class="tab"><a style="width: 20%" href="#rubrica" onclick="loadRubrica()">Rubrica</a></li>
+        <li class="tab active"><a style="width: 16.66%" href="#prove">Prove</a></li>
+        <li class="tab"><a style="width: 16.66%" href="#news">News</a></li>
+        <li class="tab"><a style="width: 16.66%" href="#basi">Basi</a></li>
+        <li class="tab"><a style="width: 16.66%" href="#concerti">Concerti</a></li>
+        <li class="tab"><a style="width: 16.66%" href="#rubrica" onclick="loadRubrica()">Rubrica</a></li>
+        <li class="tab"><a style="width: 16.66%" href="#profilo">Profilo</a></li>
       </ul>
 
       <div class="tab-content">
@@ -113,7 +129,18 @@
 
           <div id="rubrica_results"></div>
 
-        </div> <!-- /rubrica-->
+        </div> <!-- /rubrica -->
+
+        <div id="profilo" style="display: none">
+            <?php
+            echo "<table align='center' style='max-width:50%'>";
+            echo "<tr> <th> Nome e Cognome </th><td>".$login_name." ".$login_surname."</td> </tr>";
+            echo "<tr> <th> Username </th><td>".$login_username."</td> </tr>";
+            echo "<tr> <th> Chat ID </th><td>".$login_chatid."</td> </tr>";
+            echo "</table><br>";
+            ?>
+            <input type="button" onclick="location.href='../FSO_Assistant/PHP/logout.php';" value="Logout" />
+        </div> <!-- /profilo -->
 
       </div> <!-- /tab-content -->
     </div> <!-- /form -->

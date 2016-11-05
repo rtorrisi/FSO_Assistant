@@ -21,11 +21,11 @@ h1 {
 
 a {
   text-decoration: none;
-  color: #1ab188;
+  color: #c62828;
   -webkit-transition: .5s ease;
   transition: .5s ease;
 }
-a:hover { color: #179b77; }
+a:hover { color: #b71c1c; }
 
 table {
     margin-top: 20px;

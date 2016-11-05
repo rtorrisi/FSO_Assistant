@@ -1,6 +1,14 @@
 <?php
 include 'db_connection.php';
 include 'bot_info.php';
+session_start();
+
+$user = $_SESSION['username'];
+if(!isset($user)) header("Location: ../index.php");
+
+$sql = mysqli_query($conn,"SELECT username FROM Admin WHERE username='$user' ");
+$row=mysqli_fetch_array($sql);
+$login_username = $row['username'];
 
 if($_POST){
 
@@ -15,7 +23,7 @@ if($_POST){
     $sended=1;
 
       if($type=="text") {
-          $sql = "SELECT chat_id FROM Utenti";
+          $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1";
           $rs = $conn->query($sql);
 
           while ($row = $rs->fetch_assoc()) {
@@ -24,14 +32,14 @@ if($_POST){
           }
 
           $sql = "INSERT INTO News (news, Admin_username)
-          VALUES ('$message', 'rtorrisi')";
+          VALUES ('$message', '$login_username')";
           $conn->query($sql);
       }
 
       else if($type=="image") {
         $img = curl_file_create('../Data/website_img/file.'.$ext);
 
-        $sql = "SELECT chat_id FROM Utenti";
+        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1";
         $rs = $conn->query($sql);
 
         $count=0;
@@ -67,14 +75,14 @@ if($_POST){
         }
 
         $sql = "INSERT INTO News (news, allegato, estensione, Admin_username)
-        VALUES ('$message', '$file_to_db', '$ext', 'rtorrisi')";
+        VALUES ('$message', '$file_to_db', '$ext', '$login_username')";
         $conn->query($sql);
       }
 
       else {
         $file = curl_file_create('../Data/website_img/file.'.$ext);
 
-        $sql = "SELECT chat_id FROM Utenti";
+        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1";
         $rs = $conn->query($sql);
 
         $count=0;
@@ -110,7 +118,7 @@ if($_POST){
         }
 
         $sql = "INSERT INTO News (news, allegato, estensione, Admin_username)
-        VALUES ('$message', '$file_to_db', '$ext', 'rtorrisi')";
+        VALUES ('$message', '$file_to_db', '$ext', '$login_username')";
         $conn->query($sql);
       }
 

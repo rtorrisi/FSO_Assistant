@@ -1,3 +1,9 @@
+<?php
+include 'PHP/login.php';
+session_start();
+if ( (isset($_SESSION['username'])!='') ) header('Location: profile.php');
+?>
+
 <!DOCTYPE html>
 <html >
   <head>
@@ -24,7 +30,7 @@
         <div id="signup" style="display: none">
           <div id="sign_up_result"> <h1>Sign Up Now!</h1> </div>
 
-          <form id="sign_up_form" action="sign_up.php" method="post">
+          <form id="sign_up_form" action="" method="post">
             <input type="file" name="file_attach[]" id="file" onchange="readURL(this)" accept="image/gif, image/jpeg, image/png"/>
             <img id="profile_pic" src="Data/website_img/profile_default.png" onclick="loadFile()"/>
             <div class="top-row">
@@ -70,7 +76,7 @@
 
           <img id="show_pic" src="Data/website_img/profile_default.png">
 
-          <form id="log_in_form" action="log_in.php" method="post">
+          <form id="log_in" action="" method="post">
             <div class="field-wrap">
               <label>
                 Username<span class="req">*</span>
@@ -83,7 +89,7 @@
               </label>
               <input type="password" name="password" required autocomplete="off"/>
             </div>
-            <button type="submit" class="button button-block"/>Sign Up</button>
+            <button name="submit" type="submit" class="button button-block"/>Sign Up</button>
           </form>
 
         </div>
