@@ -23,7 +23,7 @@ if($_POST){
     $sended=1;
 
       if($type=="text") {
-          $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1";
+          $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1 OR idUtente=2";
           $rs = $conn->query($sql);
 
           while ($row = $rs->fetch_assoc()) {
@@ -31,15 +31,15 @@ if($_POST){
             if(strlen($result)==0) $sended=0;
           }
 
-          $sql = "INSERT INTO News (news, Admin_username)
-          VALUES ('$message', '$login_username')";
+          $sql = "INSERT INTO News (news, estensione, Admin_username)
+          VALUES ('$message', 'testo', '$login_username')";
           $conn->query($sql);
       }
 
       else if($type=="image") {
         $img = curl_file_create('../Data/website_img/file.'.$ext);
 
-        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1";
+        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1 OR idUtente=2";
         $rs = $conn->query($sql);
 
         $count=0;
@@ -82,7 +82,7 @@ if($_POST){
       else {
         $file = curl_file_create('../Data/website_img/file.'.$ext);
 
-        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1";
+        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1 OR idUtente=2";
         $rs = $conn->query($sql);
 
         $count=0;

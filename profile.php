@@ -66,20 +66,22 @@ $login_chatid = $row['chat_id'];
           </div><!-- /tab2-content-->
         </div><!-- /prove-->
 
-        <div id="news" style="display: none">
+<!-- NEWS -->
+  <div id="news" style="display: none">
 
-            <ul class="tab2-group">
-              <li class="tab2" id="newst1"><a style="width: 50%" href="#news1">Invia news</a></li>
-              <li class="tab2" id="newst2"><a style="width: 50%" href="#news2">Visualizza news</a></li>
-            </ul>
+      <ul class="tab2-group">
+        <li class="tab2" id="newst1"><a style="width: 50%" href="#news1">Invia news</a></li>
+        <li class="tab2" id="newst2"><a style="width: 50%" href="#news2" onclick="loadNews()">Visualizza news</a></li>
+      </ul>
 
-            <div class="tab2-content">
+    <div class="tab2-content">
 
-              <div id="news1" style="display: none">
-                <div id="news_result"> <h1>Invia News!</h1> </div>
+<!-- INVIA NEWS -->
+      <div id="news1" style="display: none">
 
-                <form id="news_form" action="sendNews.php" method="post">
+        <div id="news_result"> <h1>Invia News!</h1> </div>
 
+        <form id="news_form" action="sendNews.php" method="post">
                   <div style="float: left">
                     <div class="field-wrap">
                       <label> News <span class="req">*</span> </label>
@@ -102,17 +104,19 @@ $login_chatid = $row['chat_id'];
                 </div><br>
                 <div id="file_name_loaded">File caricato: nessuno </div><br>
 
-                      <button type="submit" class="button button-block"/>Invia News</button>
-                </form>
-              </div>
+                <button type="submit" class="button button-block"/>Invia News</button>
+        </form>
+      </div>
+<!-- VISUALIZZA NEWS -->
+      <div id="news2" style="display: none">
+        <div id="newsOption_result"> </div>
+        <div id="showNews_result"> </div>
+      </div>
 
-              <div id="news2" style="display: none">
-                <h1> Visualizza News! </h1>
-              </div>
 
-            </div> <!-- /tab2-content-->
-
-        </div>
+    </div>
+  </div>
+<!-- /NEWS -->
 
         <div id="basi" style="display: none">
           <h1>Basi!</h1>
@@ -122,7 +126,7 @@ $login_chatid = $row['chat_id'];
           <h1> Concerti! </h1>
         </div> <!-- /concerti-->
 
-        <div id="rubrica" style="display: none">
+        <div id="rubrica" style="display: none"><br>
           <div class="field-wrap">
             <label> Search </label> <input type="text" id="search_rubrica" required autocomplete="off"/>
           </div>

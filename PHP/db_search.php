@@ -7,7 +7,7 @@ $mess = $_POST['value'];
 $searchType = substr($mess, 0, 3);
 $value = substr($mess, 3);
 
-echo '<table align="center"';
+echo '<table align="center">';
 
 switch ($searchType) {
   //########################################################

@@ -21,6 +21,24 @@ function loadAssenze() {
           $("#assenze_results").html(data);
         });
 }
+function loadNews() {
+        $.post('PHP/showNewsOption.php',{}, function(data){
+          $("#newsOption_result").html(data);
+        });
+
+        $.post('PHP/showNews.php',{estensione:'all', admin:'all'}, function(data){
+          $("#showNews_result").html(data);
+        });
+}
+
+function newsOptionChanged() {
+    var var_type = $("#opt_type").find(":selected").val();
+    var var_admin = $("#opt_admin").find(":selected").val();
+    $.post('PHP/showNews.php',{estensione:var_type, admin:var_admin}, function(data){
+      $("#showNews_result").html(data);
+    });
+}
+
 
 $(function() {
         $("#search_rubrica").keyup(function(){

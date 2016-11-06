@@ -19,6 +19,12 @@ h1 {
   margin: 0 0 15px 0;
 }
 
+td a {
+  text-decoration: none;
+  color: #ffffff;
+  -webkit-transition: .5s ease;
+  transition: .5s ease;
+}
 a {
   text-decoration: none;
   color: #c62828;
@@ -167,6 +173,11 @@ textarea {
   min-height: 120px;
   width: 400px;
 }
+td textarea {
+  resize: none;
+  min-height: 30px;
+  width: 400px;
+}
 input:hover, textarea:hover, select:hover {
   outline: 0;
   box-shadow: 0 4px 4px 4px rgba(198, 40, 40, 0.5);
@@ -197,6 +208,12 @@ option {
 }
 .top-row > div:last-child {
   margin: 0;
+}
+
+.four-in-row {
+  float: left;
+  width: 22%;
+  margin-right: 4%;
 }
 
 .button {
