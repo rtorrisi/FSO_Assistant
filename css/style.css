@@ -175,8 +175,9 @@ textarea {
 }
 td textarea {
   resize: none;
-  min-height: 30px;
-  width: 400px;
+  min-height: 0px;
+  height: 40px;
+  width: 300px;
 }
 input:hover, textarea:hover, select:hover {
   outline: 0;

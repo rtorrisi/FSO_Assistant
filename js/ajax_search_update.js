@@ -39,6 +39,12 @@ function newsOptionChanged() {
     });
 }
 
+function searchNewsId(row) {
+  window.open(
+  "PHP/newsInfo.php?idNews="+$(row).attr("id"),
+  "_blank"
+  );
+}
 
 $(function() {
         $("#search_rubrica").keyup(function(){
