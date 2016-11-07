@@ -6,8 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Database {
     
@@ -18,10 +16,8 @@ public class Database {
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/FSO_Database", "root", "admin");
         }
-        catch (SQLException e) { e.printStackTrace(); }
-        catch (ClassNotFoundException ex) {
-            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        catch (SQLException ex) {}
+        catch (ClassNotFoundException ex2) {}
     }
     
     public Connection getConnection() { return connection; }
@@ -51,7 +47,7 @@ public class Database {
                     return true;
                 }
                 
-            } catch (SQLException ex) { return false; }
+            } catch (SQLException ex) {}
             return false;
     }
     
@@ -66,6 +62,6 @@ public class Database {
                 ps.setString(4, u);
                 ps.executeUpdate();
                 
-            } catch (SQLException e) { }
+            } catch (SQLException ex) {}
     }
 }

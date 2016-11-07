@@ -8,7 +8,9 @@ if(!isset($user)) header("Location: ../index.php");
 
 $sql = mysqli_query($conn,"SELECT username FROM Admin WHERE username='$user' ");
 $row=mysqli_fetch_array($sql);
+
 $login_username = $row['username'];
+$keyboard = "{\"keyboard\":[[\"News ricevuta! \xF0\x9F\x91\x8D\"]],\"one_time_keyboard\":true,\"resize_keyboard\":true}";
 
 if($_POST){
 
@@ -23,11 +25,11 @@ if($_POST){
     $sended=1;
 
       if($type=="text") {
-          $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1 OR idUtente=2";
+          $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1";
           $rs = $conn->query($sql);
 
           while ($row = $rs->fetch_assoc()) {
-            $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message));
+            $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message)."&reply_markup=".$keyboard);
             if(strlen($result)==0) $sended=0;
           }
 
@@ -39,7 +41,7 @@ if($_POST){
       else if($type=="image") {
         $img = curl_file_create('../Data/website_img/file.'.$ext);
 
-        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1 OR idUtente=2";
+        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1";
         $rs = $conn->query($sql);
 
         $count=0;
@@ -47,15 +49,16 @@ if($_POST){
         while ($row = $rs->fetch_assoc()) {
 
           if($count!=0) { //se è già stato inviato
-              $result = file_get_contents($botUrl.'sendPhoto?chat_id='.$row["chat_id"].'&photo='.$image_id.'&caption='.urlencode($message));
+              $result = file_get_contents($botUrl."sendPhoto?chat_id=".$row["chat_id"]."&photo=".$image_id);
+              if(strlen($result)==0) $sended=0;
+              $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message)."&reply_markup=".$keyboard);
               if(strlen($result)==0) $sended=0;
           }
           else { //invia per la prima volta ai server Telegram
             $target_url = $botUrl.'sendPhoto';
             $post = array(
                 'chat_id'   => $row["chat_id"],
-                'photo'  => $img,
-                'caption'   => $message
+                'photo'  => $img
             );
 
             $ch = curl_init();
@@ -66,6 +69,9 @@ if($_POST){
             $result=curl_exec ($ch);
             if(strlen($result)==0) $sended=0;
             curl_close ($ch);
+
+            $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message)."&reply_markup=".$keyboard);
+            if(strlen($result)==0) $sended=0;
 
             $array = json_decode($result, true);
             $image_id = $array['result']['photo'][0]['file_id'];
@@ -82,7 +88,7 @@ if($_POST){
       else {
         $file = curl_file_create('../Data/website_img/file.'.$ext);
 
-        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1 OR idUtente=2";
+        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1";
         $rs = $conn->query($sql);
 
         $count=0;
@@ -90,15 +96,16 @@ if($_POST){
         while ($row = $rs->fetch_assoc()) {
 
           if($count!=0) {
-            $result=file_get_contents($botUrl.'sendDocument?chat_id='.$row["chat_id"].'&document='.$document_id.'&caption='.urlencode($message));
+            $result=file_get_contents($botUrl.'sendDocument?chat_id='.$row["chat_id"].'&document='.$document_id);
+            if(strlen($result)==0) $sended=0;
+            $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message)."&reply_markup=".$keyboard);
             if(strlen($result)==0) $sended=0;
           }
           else {  //invia per la prima volta ai server Telegram
             $target_url = $botUrl.'sendDocument';
             $post = array(
                 'chat_id'   => $row["chat_id"],
-                'document'  => $file,
-                'caption'   => $message
+                'document'  => $file
             );
 
             $ch = curl_init();
@@ -109,6 +116,9 @@ if($_POST){
             $result=curl_exec ($ch);
             if(strlen($result)==0) $sended=0;
             curl_close ($ch);
+
+            $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message)."&reply_markup=".$keyboard);
+            if(strlen($result)==0) $sended=0;
 
             $array = json_decode($result, true);
             $document_id = $array['result']['document']['file_id'];

@@ -122,7 +122,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendMessageRequest.setChatId(chat_id);
             sendMessageRequest.setText(text);
             try { sendMessage(sendMessageRequest);
-            } catch (TelegramApiException e) {}
+            } catch (TelegramApiException ex) {}
     }
     public void sendMessage(String text, ReplyKeyboardMarkup keyboard, String chat_id) {
             SendMessage sendMessageRequest = new SendMessage();
@@ -130,7 +130,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendMessageRequest.setText(text);
             sendMessageRequest.setReplyMarkup(keyboard);
             try { sendMessage(sendMessageRequest);
-            } catch (TelegramApiException e) {}
+            } catch (TelegramApiException ex) {}
     }
     public void sendMessageToAdmin(String text) {
 
@@ -142,7 +142,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     sendMessageRequest.setChatId(rs.getString("chat_id"));
                     sendMessage(sendMessageRequest);
                 }
-            } catch(SQLException e) {} catch (TelegramApiException e) {}
+            } catch(SQLException ex) {} catch (TelegramApiException ex2) {}
     }
 
     public void sendProfile(String username, String chatID) {
@@ -159,7 +159,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             ans += rs.getString("nome") + " "+ rs.getString("cognome") + "\n\n";
             ans += "Assenze fatte: " + rs.getInt("assenze") + "\n";
             ans += "Assenze rimanenti: " + (MAX_ASSENZE - rs.getInt("assenze"));
-        } catch(SQLException e) { e.printStackTrace();}
+        } catch(SQLException ex) {}
 
         sendMessage(ans, getMainMenuKeyboard(), chatID);
     }
@@ -214,7 +214,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             is.close();
             os.close();
-            } catch (TelegramApiException e) {} catch (IOException e) {}
+            } catch (TelegramApiException e) {} catch (IOException ex) {}
 	}
     public void sendNewImage(String chat_id, String imagePath) throws TelegramApiException, IOException {
             SendPhoto sendPhotoRequest = new SendPhoto();
