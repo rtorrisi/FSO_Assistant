@@ -10,7 +10,10 @@ $sql = mysqli_query($conn,"SELECT username FROM Admin WHERE username='$user' ");
 $row=mysqli_fetch_array($sql);
 
 $login_username = $row['username'];
-$keyboard = "{\"keyboard\":[[\"News ricevuta! \xF0\x9F\x91\x8D\"]],\"one_time_keyboard\":true,\"resize_keyboard\":true}";
+
+$keyboard = [ 'inline_keyboard' => [ [['text' =>  'News ricevuta 👍', 'callback_data' => 'f']], ] ];
+$markup = json_encode($keyboard, true);
+
 
 if($_POST){
 
@@ -29,7 +32,7 @@ if($_POST){
           $rs = $conn->query($sql);
 
           while ($row = $rs->fetch_assoc()) {
-            $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message)."&reply_markup=".$keyboard);
+            $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message)."&reply_markup=".$markup);
             if(strlen($result)==0) $sended=0;
           }
 
@@ -51,7 +54,7 @@ if($_POST){
           if($count!=0) { //se è già stato inviato
               $result = file_get_contents($botUrl."sendPhoto?chat_id=".$row["chat_id"]."&photo=".$image_id);
               if(strlen($result)==0) $sended=0;
-              $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message)."&reply_markup=".$keyboard);
+              $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message)."&reply_markup=".$markup);
               if(strlen($result)==0) $sended=0;
           }
           else { //invia per la prima volta ai server Telegram
@@ -70,7 +73,7 @@ if($_POST){
             if(strlen($result)==0) $sended=0;
             curl_close ($ch);
 
-            $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message)."&reply_markup=".$keyboard);
+            $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message)."&reply_markup=".$markup);
             if(strlen($result)==0) $sended=0;
 
             $array = json_decode($result, true);

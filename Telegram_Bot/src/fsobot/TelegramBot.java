@@ -24,7 +24,9 @@ import org.telegram.telegrambots.api.objects.File;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.PhotoSize;
 import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -77,10 +79,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     else if(mess.contains("rubrica")) sendRubrica(chatID);
                     else if(mess.contains("numero")) sendUsersNumber(mess, chatID);
                     else if(mess.contains("regolamento")) sendDocumentById(chatID, "BQADBAADTwADiz5kChEOy4qfimUdAg");
-
-                    else if(mess.contains("facebook")) sendMessage("www.facebook.com/FreeSoundStudiesMusicAcademy", chatID);
-                    else if(mess.contains("youtube")) sendMessage("www.youtube.com/user/FreeSoundStudies", chatID);
-                    else if(mess.contains("sito")) sendMessage("www.freesoundstudies.it", chatID);
+                    else if(mess.contains("link esterni")) sendMessage("Ecco qui i link utili", linkInline(),chatID);
                     //##########################################################
 
                     // ASSENZA E RITARDO #######################################
@@ -121,6 +120,14 @@ public class TelegramBot extends TelegramLongPollingBot {
             SendMessage sendMessageRequest = new SendMessage();
             sendMessageRequest.setChatId(chat_id);
             sendMessageRequest.setText(text);
+            try { sendMessage(sendMessageRequest);
+            } catch (TelegramApiException ex) {}
+    }
+    public void sendMessage(String text,  InlineKeyboardMarkup keyboard, String chat_id) {
+            SendMessage sendMessageRequest = new SendMessage();
+            sendMessageRequest.setChatId(chat_id);
+            sendMessageRequest.setText(text);
+            sendMessageRequest.setReplyMarkup(keyboard);
             try { sendMessage(sendMessageRequest);
             } catch (TelegramApiException ex) {}
     }
@@ -270,7 +277,26 @@ public class TelegramBot extends TelegramLongPollingBot {
         return i<str.length()-2?str.substring(i+1):"";
     }
 
+    private static InlineKeyboardMarkup linkInline() {
+            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+            
+            List<List<InlineKeyboardButton>> keyboard = new ArrayList();
+            
+                List<InlineKeyboardButton> line1 = new ArrayList();
+                    InlineKeyboardButton a = new InlineKeyboardButton(); a.setText("👥 Facebook"); a.setUrl("www.facebook.com/FreeSoundStudiesMusicAcademy");
+                    line1.add(a); keyboard.add(line1);
 
+                List<InlineKeyboardButton> line2 = new ArrayList();    
+                    InlineKeyboardButton b = new InlineKeyboardButton(); b.setText("🎥 Youtube"); b.setUrl("www.youtube.com/user/FreeSoundStudies");
+                    line2.add(b); keyboard.add(line2);
+                    
+                List<InlineKeyboardButton> line3 = new ArrayList();
+                    InlineKeyboardButton c = new InlineKeyboardButton(); c.setText("🌐 Sito Web"); c.setUrl("www.freesoundstudies.it");
+                    line3.add(c); keyboard.add(line3);
+            
+            inlineKeyboardMarkup.setKeyboard(keyboard);
+            return inlineKeyboardMarkup;
+    }
     private static ReplyKeyboardMarkup getMainMenuKeyboard() {
             ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
             replyKeyboardMarkup.setSelective(true);
@@ -282,16 +308,22 @@ public class TelegramBot extends TelegramLongPollingBot {
                 KeyboardRow keyboard1Row = new KeyboardRow();
                     keyboard1Row.add("👤 Profilo");
                 KeyboardRow keyboard2Row = new KeyboardRow();
-                    keyboard2Row.add("🅰 Segnala Assenza");
-                    keyboard2Row.add("🕗 Segnala Ritardo");
+                    keyboard2Row.add("📰 News");
                 KeyboardRow keyboard3Row = new KeyboardRow();
-                    keyboard3Row.add("🎧 Basi");
-                    keyboard3Row.add("📰 News");
-                    keyboard3Row.add("📎 Info");
+                    keyboard3Row.add("🅰 Segnala Assenza alle prove");
+                KeyboardRow keyboard4Row = new KeyboardRow();
+                    keyboard4Row.add("🕗 Segnala Ritardo alle prove");
+                KeyboardRow keyboard5Row = new KeyboardRow();
+                    keyboard5Row.add("🎧 Basi");
+                KeyboardRow keyboard6Row = new KeyboardRow();
+                    keyboard6Row.add("📎 Info");
 
             keyboard.add(keyboard1Row);
             keyboard.add(keyboard2Row);
             keyboard.add(keyboard3Row);
+            keyboard.add(keyboard4Row);
+            keyboard.add(keyboard5Row);
+            keyboard.add(keyboard6Row);
             replyKeyboardMarkup.setKeyboard(keyboard);
 
             return replyKeyboardMarkup;
@@ -307,19 +339,21 @@ public class TelegramBot extends TelegramLongPollingBot {
             KeyboardRow keyboardMenuRow = new KeyboardRow(); keyboardMenuRow.add("📱 Menu");
             KeyboardRow keyboard1Row = new KeyboardRow();
                 keyboard1Row.add("📃 Brani Prova");
-                keyboard1Row.add("📅 Concerti");
             KeyboardRow keyboard2Row = new KeyboardRow();
-                keyboard2Row.add("☎ Rubrica");
-                keyboard2Row.add("📜 Regolamento");
+                keyboard2Row.add("📅 Concerti");
             KeyboardRow keyboard3Row = new KeyboardRow();
-                keyboard3Row.add("👥 Facebook");
-                keyboard3Row.add("🎥 YouTube");
-                keyboard3Row.add("🌐 Sito");
+                keyboard3Row.add("☎ Rubrica");
+            KeyboardRow keyboard4Row = new KeyboardRow();
+                keyboard4Row.add("📜 Regolamento");
+            KeyboardRow keyboard5Row = new KeyboardRow();
+                keyboard5Row.add("🌐 Link Esterni");
 
             keyboard.add(keyboardMenuRow);
             keyboard.add(keyboard1Row);
             keyboard.add(keyboard2Row);
             keyboard.add(keyboard3Row);
+            keyboard.add(keyboard4Row);
+            keyboard.add(keyboard5Row);
 
             replyKeyboardMarkup.setKeyboard(keyboard);
 
