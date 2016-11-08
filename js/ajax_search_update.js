@@ -26,7 +26,7 @@ function loadNews() {
           $("#newsOption_result").html(data);
         });
 
-        $.post('PHP/showNews.php',{estensione:'all', admin:'all'}, function(data){
+        $.post('PHP/showNews.php',{estensione:'all', admin:'all', data_start:'today', data_end:'today'}, function(data){
           $("#showNews_result").html(data);
         });
 }
@@ -34,7 +34,9 @@ function loadNews() {
 function newsOptionChanged() {
     var var_type = $("#opt_type").find(":selected").val();
     var var_admin = $("#opt_admin").find(":selected").val();
-    $.post('PHP/showNews.php',{estensione:var_type, admin:var_admin}, function(data){
+    var var_start = $("#opt_dataStart").find(":selected").val();
+    var var_end = $("#opt_dataEnd").find(":selected").val();
+    $.post('PHP/showNews.php',{estensione:var_type, admin:var_admin, data_start:var_start, data_end:var_end}, function(data){
       $("#showNews_result").html(data);
     });
 }

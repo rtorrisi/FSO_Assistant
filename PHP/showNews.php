@@ -3,12 +3,27 @@ include 'db_connection.php';
 
 $estensione = $_POST['estensione'];
 $admin = $_POST['admin'];
-//$data = "";
+$data_start = $_POST['data_start'];
+$data_end = $_POST['data_end'];
 
 if($estensione=="all") $estensione="";
 if($admin=="all") $admin="";
 
-$sql = "SELECT * FROM News WHERE estensione LIKE '".$estensione."%' AND Admin_username LIKE '".$admin."%'";
+if($data_start=="start" || $data_start=="today" || $data_end=="today") {
+  $sql = "SELECT max(data_news) AS max_data, min(data_news) AS min_data FROM News";
+  $result = $conn->query($sql);
+  if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+      if($data_start=="start") $data_start = $row['min_data'];
+      else if($data_start=="today") $data_start = $row['max_data'];
+      if($data_end=="today") $data_end = $row['max_data'];
+  }
+}
+
+$sql = "SELECT *, extract(DAY from data_news) AS giorno, extract(MONTH from data_news) AS mese, extract(YEAR from data_news) AS anno
+        FROM News
+        WHERE estensione LIKE '".$estensione."%' AND Admin_username LIKE '".$admin."%' AND data_news BETWEEN '".$data_start."' AND '".$data_end."'
+        ORDER BY data_news DESC, idNews DESC";
 
 echo '
 <br><br><br><h1> News </h1>
@@ -22,9 +37,15 @@ $result = $conn->query($sql);
       $idNews = $row['idNews'];
       $news  = $row['news'];
       $ext = $row['estensione'];
-      echo '<tr id="'.$idNews.'" onclick="searchNewsId(this)"><td>'.$idNews.'</td><td><textarea>'.$news.'</textarea></td><td> 01/01/1990 </td><td>'.$ext.'</td></tr>';
+      $giorno = $row['giorno'];
+        $giorno = ($giorno<10) ? '0'.$giorno : $giorno;
+      $mese = $row['mese'];
+        $mese = ($mese<10) ? '0'.$mese : $mese;
+      $anno = $row['anno'];
+      $data = $giorno.'-'.$mese.'-'.$anno;
+      echo '<tr id="'.$idNews.'" onclick="searchNewsId(this)"><td>'.$idNews.'</td><td><textarea>'.$news.'</textarea></td><td>'.$data.'</td><td>'.$ext.'</td></tr>';
     }
-  }
+  } else { echo '<tr><td colspan="4">Nessun risultato trovato. </td></tr>'; }
 
 echo '</table>';
 ?>

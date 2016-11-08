@@ -16,8 +16,7 @@ public class Database {
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/FSO_Database", "root", "admin");
         }
-        catch (SQLException ex) {}
-        catch (ClassNotFoundException ex2) {}
+        catch (SQLException ex) {} catch (ClassNotFoundException ex2) {}
     }
     
     public Connection getConnection() { return connection; }

@@ -6,19 +6,26 @@ session_start();
 $user = $_SESSION['username'];
 if(!isset($user)) header("Location: ../index.php");
 
+$sql = mysqli_query($conn,"SELECT max(idNews) AS lastID FROM News");
+$row=mysqli_fetch_array($sql);
+$lastID = $row['lastID'];
+
+$data = date('Y-m-d');
+
 $sql = mysqli_query($conn,"SELECT username FROM Admin WHERE username='$user' ");
 $row=mysqli_fetch_array($sql);
-
 $login_username = $row['username'];
 
-$keyboard = [ 'inline_keyboard' => [ [['text' =>  'News ricevuta 👍', 'callback_data' => 'f']], ] ];
+$keyboard = [ 'inline_keyboard' => [ [['text' =>  'Precedente', 'callback_data' => 'prev'],['text' =>  'Successiva', 'callback_data' => 'next']],[['text' =>  'News ricevuta 👍', 'callback_data' => 'news_received']] ] ];
 $markup = json_encode($keyboard, true);
 
 
 if($_POST){
 
     $type = $_POST['type'];
-    $message = $_POST['message'];
+    $news = $_POST['message'];
+    $newsID = $lastID+1;
+    $message = "#news".$newsID."\n\n".$news;
 
     $file_to_db = addslashes(file_get_contents($_FILES['file_attach']['tmp_name'][0]));
     $info = pathinfo($_FILES['file_attach']['name'][0]);
@@ -36,8 +43,8 @@ if($_POST){
             if(strlen($result)==0) $sended=0;
           }
 
-          $sql = "INSERT INTO News (news, estensione, Admin_username)
-          VALUES ('$message', 'testo', '$login_username')";
+          $sql = "INSERT INTO News (news, estensione, data_news, Admin_username)
+          VALUES ('$news', 'testo', '$data', '$login_username')";
           $conn->query($sql);
       }
 
@@ -58,6 +65,8 @@ if($_POST){
               if(strlen($result)==0) $sended=0;
           }
           else { //invia per la prima volta ai server Telegram
+            file_get_contents($botUrl."sendChatAction?chat_id=".$row["chat_id"]."&action=upload_photo");
+
             $target_url = $botUrl.'sendPhoto';
             $post = array(
                 'chat_id'   => $row["chat_id"],
@@ -83,8 +92,8 @@ if($_POST){
           $count++;
         }
 
-        $sql = "INSERT INTO News (news, allegato, estensione, Admin_username)
-        VALUES ('$message', '$file_to_db', '$ext', '$login_username')";
+        $sql = "INSERT INTO News (news, allegato, estensione, data_news, Admin_username)
+        VALUES ('$news', '$file_to_db', '$ext', '$data','$login_username')";
         $conn->query($sql);
       }
 
@@ -105,6 +114,7 @@ if($_POST){
             if(strlen($result)==0) $sended=0;
           }
           else {  //invia per la prima volta ai server Telegram
+            file_get_contents($botUrl."sendChatAction?chat_id=".$row["chat_id"]."&action=upload_document");
             $target_url = $botUrl.'sendDocument';
             $post = array(
                 'chat_id'   => $row["chat_id"],
@@ -130,8 +140,8 @@ if($_POST){
           $count++;
         }
 
-        $sql = "INSERT INTO News (news, allegato, estensione, Admin_username)
-        VALUES ('$message', '$file_to_db', '$ext', '$login_username')";
+        $sql = "INSERT INTO News (news, allegato, estensione, data_news, Admin_username)
+        VALUES ('$news', '$file_to_db', '$ext', '$data','$login_username')";
         $conn->query($sql);
       }
 
@@ -141,4 +151,5 @@ if($_POST){
 }
 
 $conn->close();
+
 ?>

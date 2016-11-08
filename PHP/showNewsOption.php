@@ -4,21 +4,63 @@ include 'db_connection.php';
 echo '
     <div class="four-in-row">
       Dal
-      <select name="opt_dataStart">
-        <option value="all"> tutto </option>
+      <select id="opt_dataStart" onchange="newsOptionChanged()">
+        <optgroup style="max-height: 80px;">
+        <option value="today"> oggi </option>
+        <option value="start"> inizio </option>
+';
+
+$sql = "SELECT DISTINCT data_news, extract(DAY from data_news) AS giorno, extract(MONTH from data_news) AS mese, extract(YEAR from data_news) AS anno FROM News WHERE data_news IS NOT NULL ORDER BY data_news DESC";
+$result = $conn->query($sql);
+  if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+      $sql_data = $row['data_news'];
+      $giorno = $row['giorno'];
+        $giorno = ($giorno<10) ? '0'.$giorno : $giorno;
+      $mese = $row['mese'];
+        $mese = ($mese<10) ? '0'.$mese : $mese;
+      $anno = $row['anno'];
+      $data = $giorno.'-'.$mese.'-'.$anno;
+        echo "<option value='$sql_data'>".$data."</option>";
+      }
+    }
+
+echo '
+        </optgroup>
       </select>
     </div>
 
     <div class="four-in-row">
       Al
-      <select name="opt_dataEnd">
-        <option value="all"> tutto </option>
+      <select id="opt_dataEnd" onchange="newsOptionChanged()">
+        <optgroup style="max-height: 80px;">
+        <option value="today"> oggi </option>
+';
+
+  $sql = "SELECT DISTINCT data_news, extract(DAY from data_news) AS giorno, extract(MONTH from data_news) AS mese, extract(YEAR from data_news) AS anno FROM News WHERE data_news IS NOT NULL ORDER BY data_news DESC";
+  $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+      while ($row = $result->fetch_assoc()) {
+        $sql_data = $row['data_news'];
+        $giorno = $row['giorno'];
+          $giorno = ($giorno<10) ? '0'.$giorno : $giorno;
+        $mese = $row['mese'];
+          $mese = ($mese<10) ? '0'.$mese : $mese;
+        $anno = $row['anno'];
+        $data = $giorno.'-'.$mese.'-'.$anno;
+        echo "<option value='$sql_data'>".$data."</option>";
+      }
+    }
+
+echo '
+      </optgroup>
       </select>
     </div>
 
     <div class="four-in-row" style="width: 18%">
       Tipo
       <select id="opt_type" onchange="newsOptionChanged()">
+        <optgroup style="max-height: 80px;">
         <option value="all"> tutto </option>
 ';
 
@@ -32,12 +74,14 @@ $result = $conn->query($sql);
   }
 
 echo '
+      </optgroup>
       </select>
     </div>
 
     <div class="four-in-row" style="width: 26%; margin-right: 0">
       Inviato da
       <select id="opt_admin" onchange="newsOptionChanged()">
+        <optgroup style="max-height: 80px;">
         <option value="all"> tutto </option>
 ';
 
@@ -57,6 +101,7 @@ $result = $conn->query($sql);
   }
 
 echo '
+      </optgroup>
       </select>
     </div>
 ';

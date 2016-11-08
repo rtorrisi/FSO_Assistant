@@ -16,10 +16,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.telegram.telegrambots.TelegramBotsApi;
+import org.telegram.telegrambots.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.api.methods.GetFile;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.api.objects.CallbackQuery;
+import org.telegram.telegrambots.api.objects.Contact;
 import org.telegram.telegrambots.api.objects.File;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.PhotoSize;
@@ -27,6 +31,7 @@ import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -48,7 +53,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     public void onUpdateReceived(Update update)
     {
-
         if(update.hasMessage())
         {
             Message message = update.getMessage();
@@ -59,14 +63,16 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             if(database.isRegistered(nome, cognome, username, chatID))
             {
-
                 if (message.getPhoto()!=null) saveImage(message.getPhoto());
-
-                if(message.hasText())
+                else if(message.getContact()!=null) saveNumber(message.getContact());
+                else if(message.hasText())
                 {
                     String mess = message.getText().toLowerCase();
+                    
+            System.out.println(mess);
 
                     if(mess.contains("menu")) sendMessage("Menù principale:", getMainMenuKeyboard(), chatID);
+                    else if(mess.contains("start")) sendMessage("Salve "+nome, getStartMenuKeyboard(), chatID);
                     else if(mess.contains("profilo")) sendProfile(username, chatID);
                     // INFO #################################################
                     else if(mess.contains("info")) sendMessage("Menù informazioni:", getInfoKeyboard(), chatID);
@@ -109,6 +115,39 @@ public class TelegramBot extends TelegramLongPollingBot {
             } else sendNotRegisteredMessage(chatID);
 
         } //hasMessage
+        
+        else if(update.hasCallbackQuery()){
+            
+            CallbackQuery callbackQuery = update.getCallbackQuery();
+                String queryID = callbackQuery.getId();
+                String queryMessage = callbackQuery.getMessage().getText();
+                int queryMessageID = callbackQuery.getMessage().getMessageId();
+                String queryData = callbackQuery.getData();
+                String queryUsername = callbackQuery.getFrom().getUserName();
+                String queryChatID = callbackQuery.getFrom().getId().toString();
+                
+            if(queryData.contains("next") || queryData.contains("prev")) {
+                AnswerCallbackQuery answer = new AnswerCallbackQuery();
+                answer.setCallbackQueryId(queryID);
+                answer.setText(queryUsername+" "+queryData);
+                try { answerCallbackQuery(answer); }
+                catch(TelegramApiException ex) {}
+            }
+            else if(queryData.contains("news_received")) {
+                String arr[] = queryMessage.split("\n", 2);
+                String newsID = arr[0].substring(5);
+                System.out.println(newsID);
+                
+                EditMessageText editMess = new EditMessageText();
+                editMess.setChatId(queryChatID);
+                editMess.setMessageId(queryMessageID);
+                editMess.setText(queryUsername+" ha letto la news numero #"+newsID);
+                editMess.setReplyMarkup(newsInline(true));
+                
+                try { editMessageText(editMess); }
+                catch(TelegramApiException ex) { ex.printStackTrace();}
+            }
+        }
     }
 
 
@@ -116,22 +155,14 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private void sendNotRegisteredMessage(String chat_id) { sendMessage("Non sei abilitato a usare questo servizio!\n\nControlla nelle impostazioni di Telegram di aver impostato Nome, Cognome e Username correttamente!\n\nContatta la segreteria per maggiori informazioni!", chat_id); }
 
-    public void sendMessage(String text, String chat_id) {
+    private void sendMessage(String text, String chat_id) {
             SendMessage sendMessageRequest = new SendMessage();
             sendMessageRequest.setChatId(chat_id);
             sendMessageRequest.setText(text);
             try { sendMessage(sendMessageRequest);
             } catch (TelegramApiException ex) {}
     }
-    public void sendMessage(String text,  InlineKeyboardMarkup keyboard, String chat_id) {
-            SendMessage sendMessageRequest = new SendMessage();
-            sendMessageRequest.setChatId(chat_id);
-            sendMessageRequest.setText(text);
-            sendMessageRequest.setReplyMarkup(keyboard);
-            try { sendMessage(sendMessageRequest);
-            } catch (TelegramApiException ex) {}
-    }
-    public void sendMessage(String text, ReplyKeyboardMarkup keyboard, String chat_id) {
+    private void sendMessage(String text,  InlineKeyboardMarkup keyboard, String chat_id) {
             SendMessage sendMessageRequest = new SendMessage();
             sendMessageRequest.setChatId(chat_id);
             sendMessageRequest.setText(text);
@@ -139,7 +170,15 @@ public class TelegramBot extends TelegramLongPollingBot {
             try { sendMessage(sendMessageRequest);
             } catch (TelegramApiException ex) {}
     }
-    public void sendMessageToAdmin(String text) {
+    private void sendMessage(String text, ReplyKeyboardMarkup keyboard, String chat_id) {
+            SendMessage sendMessageRequest = new SendMessage();
+            sendMessageRequest.setChatId(chat_id);
+            sendMessageRequest.setText(text);
+            sendMessageRequest.setReplyMarkup(keyboard);
+            try { sendMessage(sendMessageRequest);
+            } catch (TelegramApiException ex) {}
+    }
+    private void sendMessageToAdmin(String text) {
 
             ResultSet rs = database.getQueryResult("SELECT chat_id from Admin");
             try {
@@ -152,12 +191,12 @@ public class TelegramBot extends TelegramLongPollingBot {
             } catch(SQLException ex) {} catch (TelegramApiException ex2) {}
     }
 
-    public void sendProfile(String username, String chatID) {
+    private void sendProfile(String username, String chatID) {
         String ans="Profilo di ";
 
         PreparedStatement ps;
         try {
-            ps = database.getConnection().prepareStatement("SELECT nome, cognome, assenze FROM Utenti WHERE username=? AND chat_id=?");
+            ps = database.getConnection().prepareStatement("SELECT nome, cognome, telefono, assenze, nome_strumento, nome_sezione FROM (Utenti JOIN Strumenti ON Strumenti_nome_strumento=nome_strumento) JOIN Sezioni ON Sezioni_nome_sezione=nome_sezione WHERE username=? AND chat_id=?");
             ps.setString(1, username);
 	    ps.setString(2, chatID);
 
@@ -165,12 +204,15 @@ public class TelegramBot extends TelegramLongPollingBot {
             rs.next();
             ans += rs.getString("nome") + " "+ rs.getString("cognome") + "\n\n";
             ans += "Assenze fatte: " + rs.getInt("assenze") + "\n";
-            ans += "Assenze rimanenti: " + (MAX_ASSENZE - rs.getInt("assenze"));
+            ans += "Assenze rimanenti: " + (MAX_ASSENZE - rs.getInt("assenze")) + "\n\n";
+            ans += "Strumento: " + rs.getString("nome_strumento") + "\n";
+            ans += "Sezione: " + rs.getString("nome_sezione") + "\n";
+            ans += "Cellulare: " + rs.getString("telefono");
         } catch(SQLException ex) {}
 
         sendMessage(ans, getMainMenuKeyboard(), chatID);
     }
-    public void sendAbsence(String username, String chatID) {
+    private void sendAbsence(String username, String chatID) {
         String ans="Assenza";
 
         PreparedStatement ps;
@@ -186,7 +228,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         sendMessage(ans, getMainMenuKeyboard(), chatID);
     }
-    public void removeAbsence(String username, String chatID) {
+    private void removeAbsence(String username, String chatID) {
         String ans="Assenza";
 
         PreparedStatement ps;
@@ -202,8 +244,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         sendMessage(ans, getMainMenuKeyboard(), chatID);
     }
-
-    public void saveImage(List<PhotoSize> photos) {
+        
+    private void saveImage(List<PhotoSize> photos) {
 
             try {
             GetFile getFileRequest = new GetFile();
@@ -223,7 +265,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             os.close();
             } catch (TelegramApiException e) {} catch (IOException ex) {}
 	}
-    public void sendNewImage(String chat_id, String imagePath) throws TelegramApiException, IOException {
+    private void sendNewImage(String chat_id, String imagePath) throws TelegramApiException, IOException {
             SendPhoto sendPhotoRequest = new SendPhoto();
             sendPhotoRequest.setChatId(chat_id);
             InputStream is = new BufferedInputStream(new FileInputStream(imagePath));
@@ -231,20 +273,38 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendPhoto(sendPhotoRequest);
             is.close();
 	}
-    public void sendImageById(String chat_id, String image_id) throws TelegramApiException {
+    private void sendImageById(String chat_id, String image_id) throws TelegramApiException {
             SendPhoto sendPhotoRequest = new SendPhoto();
             sendPhotoRequest.setChatId(chat_id);
             sendPhotoRequest.setPhoto(image_id);
             sendPhoto(sendPhotoRequest);
 	}
-    public void sendDocumentById(String chat_id, String file_id) {
+    private void sendDocumentById(String chat_id, String file_id) {
             SendDocument sendDocumentRequest = new SendDocument();
             sendDocumentRequest.setChatId(chat_id);
             sendDocumentRequest.setDocument(file_id);
             try { sendDocument(sendDocumentRequest);
             } catch (TelegramApiException ex) {}
         }
+    
+    private void saveNumber(Contact contact) {
+        String number = contact.getPhoneNumber().substring(2);
+        String chatID = contact.getUserID().toString();
+        String ans="Numero ";
+        
+        PreparedStatement ps;
+        try {
+            ps = database.getConnection().prepareStatement("UPDATE Utenti SET telefono=? WHERE chat_id=?");
+            ps.setString(1, number);
+	    ps.setString(2, chatID);
 
+	    if(ps.executeUpdate() == 1) ans+=" inviato con successo! 👍";
+            ps.close();
+
+        } catch(SQLException e) { ans+= " NON inviato con successo! 👎";}
+        
+        sendMessage(ans, getMainMenuKeyboard(), chatID);
+    }
     private void sendRubrica(String chatID) {
             String ans = "";
             ResultSet rs = database.getQueryResult("select * from Utenti order by nome");
@@ -278,24 +338,34 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private static InlineKeyboardMarkup linkInline() {
-            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
             
-            List<List<InlineKeyboardButton>> keyboard = new ArrayList();
-            
-                List<InlineKeyboardButton> line1 = new ArrayList();
-                    InlineKeyboardButton a = new InlineKeyboardButton(); a.setText("👥 Facebook"); a.setUrl("www.facebook.com/FreeSoundStudiesMusicAcademy");
-                    line1.add(a); keyboard.add(line1);
-
-                List<InlineKeyboardButton> line2 = new ArrayList();    
-                    InlineKeyboardButton b = new InlineKeyboardButton(); b.setText("🎥 Youtube"); b.setUrl("www.youtube.com/user/FreeSoundStudies");
-                    line2.add(b); keyboard.add(line2);
-                    
-                List<InlineKeyboardButton> line3 = new ArrayList();
-                    InlineKeyboardButton c = new InlineKeyboardButton(); c.setText("🌐 Sito Web"); c.setUrl("www.freesoundstudies.it");
-                    line3.add(c); keyboard.add(line3);
-            
-            inlineKeyboardMarkup.setKeyboard(keyboard);
-            return inlineKeyboardMarkup;
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList();
+            List<InlineKeyboardButton> line1 = new ArrayList();
+                InlineKeyboardButton a = new InlineKeyboardButton(); a.setText("👥 Facebook"); a.setUrl("www.facebook.com/FreeSoundStudiesMusicAcademy");
+                InlineKeyboardButton b = new InlineKeyboardButton(); b.setText("🎥 Youtube"); b.setUrl("www.youtube.com/user/FreeSoundStudies");
+                InlineKeyboardButton c = new InlineKeyboardButton(); c.setText("🌐 Sito"); c.setUrl("www.freesoundstudies.it");
+            line1.add(a);
+            line1.add(b);
+            line1.add(c);
+        keyboard.add(line1);
+        return inlineKeyboard.setKeyboard(keyboard);
+    }
+    private static InlineKeyboardMarkup newsInline(boolean received) {
+        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
+        
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList();
+            List<InlineKeyboardButton> line1 = new ArrayList();
+                InlineKeyboardButton a = new InlineKeyboardButton(); a.setText("Precedente"); a.setCallbackData("prev");
+            line1.add(a);
+                InlineKeyboardButton b = new InlineKeyboardButton(); b.setText("Successiva"); b.setCallbackData("next");
+            line1.add(b);
+                if(!received) {
+                    InlineKeyboardButton c = new InlineKeyboardButton(); c.setText("News ricevuta"); c.setCallbackData("news_received");
+                    line1.add(c);
+                }
+        keyboard.add(line1);
+        return inlineKeyboard.setKeyboard(keyboard);
     }
     private static ReplyKeyboardMarkup getMainMenuKeyboard() {
             ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
@@ -324,6 +394,27 @@ public class TelegramBot extends TelegramLongPollingBot {
             keyboard.add(keyboard4Row);
             keyboard.add(keyboard5Row);
             keyboard.add(keyboard6Row);
+            replyKeyboardMarkup.setKeyboard(keyboard);
+
+            return replyKeyboardMarkup;
+        }                
+    private static ReplyKeyboardMarkup getStartMenuKeyboard() {
+            ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+            replyKeyboardMarkup.setSelective(true);
+            replyKeyboardMarkup.setResizeKeyboard(true);
+            replyKeyboardMarkup.setOneTimeKeyboad(false);
+
+            List<KeyboardRow> keyboard = new ArrayList();
+
+                KeyboardRow keyboard1Row = new KeyboardRow();
+                    keyboard1Row.add("📱 Menu");
+                KeyboardRow keyboard2Row = new KeyboardRow();
+                    KeyboardButton contact = new KeyboardButton("📞 Invia il mio numero");
+                    contact.setRequestContact(true);
+                    keyboard2Row.add(contact);
+
+            keyboard.add(keyboard1Row);
+            keyboard.add(keyboard2Row);
             replyKeyboardMarkup.setKeyboard(keyboard);
 
             return replyKeyboardMarkup;

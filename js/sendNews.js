@@ -18,6 +18,7 @@ function readURL(input) {
 }
 
 $("#news_form").submit(function(e){
+  $("#news_result").html('<h1> Invio in corso... </h1>');
   e.preventDefault();
   $.ajax({
     url : "PHP/sendNews.php",
