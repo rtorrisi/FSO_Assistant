@@ -16,7 +16,7 @@ $sql = mysqli_query($conn,"SELECT username FROM Admin WHERE username='$user' ");
 $row=mysqli_fetch_array($sql);
 $login_username = $row['username'];
 
-$keyboard = [ 'inline_keyboard' => [ [['text' =>  'Precedente', 'callback_data' => 'prev'],['text' =>  'Successiva', 'callback_data' => 'next']],[['text' =>  'News ricevuta 👍', 'callback_data' => 'news_received']] ] ];
+$keyboard = [ 'inline_keyboard' => [ [['text' =>  '⬅️', 'callback_data' => 'prev'],['text' =>  '➡️', 'callback_data' => 'next']],[['text' =>  'News letta 👍', 'callback_data' => 'news_received']] ] ];
 $markup = json_encode($keyboard, true);
 
 

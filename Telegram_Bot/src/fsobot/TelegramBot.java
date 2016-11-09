@@ -15,6 +15,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.api.methods.GetFile;
@@ -74,6 +76,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     if(mess.contains("menu")) sendMessage("Menù principale:", getMainMenuKeyboard(), chatID);
                     else if(mess.contains("start")) sendMessage("Salve "+nome, getStartMenuKeyboard(), chatID);
                     else if(mess.contains("profilo")) sendProfile(username, chatID);
+                    else if(mess.contains("news")) sendLastNews(chatID);
                     // INFO #################################################
                     else if(mess.contains("info")) sendMessage("Menù informazioni:", getInfoKeyboard(), chatID);
 
@@ -127,16 +130,57 @@ public class TelegramBot extends TelegramLongPollingBot {
                 String queryChatID = callbackQuery.getFrom().getId().toString();
                 
             if(queryData.contains("next") || queryData.contains("prev")) {
+                String arr[] = queryMessage.split("\n", 2);
+                String newsID = arr[0].substring(5);
+                
+                String idNews = "";
+                String news = "";
+                PreparedStatement ps;
+                ResultSet rs = null;
+                        
+                if(queryData.contains("prev")) {
+                    try {
+                        ps = database.getConnection().prepareStatement("SELECT idNews, news FROM News WHERE idNews = (SELECT max(idNews) FROM News WHERE idNews < ?)");
+                        ps.setString(1, newsID);
+                        rs = ps.executeQuery();
+                    } catch (SQLException ex) {}
+                }
+                else if(queryData.contains("next")) {
+                    try {
+                        ps = database.getConnection().prepareStatement("SELECT idNews, news FROM News WHERE idNews = (SELECT min(idNews) FROM News WHERE idNews > ?)");
+                        ps.setString(1, newsID);
+                        rs = ps.executeQuery();
+                    } catch (SQLException ex) {}
+                }
+        
+                try {
+                    while(rs.next()) {
+                    idNews = "#news"+rs.getString("idNews")+"\n\n";
+                    news = rs.getString("news");
+                    }
+                    
+                    EditMessageText editMess = new EditMessageText();
+                    editMess.setChatId(queryChatID);
+                    editMess.setMessageId(queryMessageID);
+                    editMess.setText(idNews+news);
+                    editMess.setReplyMarkup(newsInline(false));
+                    
+                    editMessageText(editMess);
+                    
+                } catch (SQLException ex) { } catch(TelegramApiException ex) {}
+            }
+            
+            else if(queryData.contains("lastNews")) {
                 AnswerCallbackQuery answer = new AnswerCallbackQuery();
                 answer.setCallbackQueryId(queryID);
-                answer.setText(queryUsername+" "+queryData);
+                answer.setText("non ci sono altre news!");
                 try { answerCallbackQuery(answer); }
                 catch(TelegramApiException ex) {}
             }
+            
             else if(queryData.contains("news_received")) {
                 String arr[] = queryMessage.split("\n", 2);
                 String newsID = arr[0].substring(5);
-                System.out.println(newsID);
                 
                 EditMessageText editMess = new EditMessageText();
                 editMess.setChatId(queryChatID);
@@ -145,7 +189,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 editMess.setReplyMarkup(newsInline(true));
                 
                 try { editMessageText(editMess); }
-                catch(TelegramApiException ex) { ex.printStackTrace();}
+                catch(TelegramApiException ex) {}
             }
         }
     }
@@ -189,6 +233,21 @@ public class TelegramBot extends TelegramLongPollingBot {
                     sendMessage(sendMessageRequest);
                 }
             } catch(SQLException ex) {} catch (TelegramApiException ex2) {}
+    }
+    
+    private void sendLastNews(String chat_id) {
+        String idNews = "null";
+        String news = "nessuna news";
+        ResultSet rs = database.getQueryResult("SELECT idNews, news FROM News WHERE idNews >= ALL (SELECT idNews FROM News)");
+        
+        try {
+            while(rs.next()) {
+                idNews = "#news"+rs.getString("idNews")+"\n\n";
+                news = rs.getString("news");
+            }
+        } catch (SQLException ex) {}
+        
+        sendMessage(idNews+news, lastNewsInline(false), chat_id);
     }
 
     private void sendProfile(String username, String chatID) {
@@ -356,15 +415,56 @@ public class TelegramBot extends TelegramLongPollingBot {
         
         List<List<InlineKeyboardButton>> keyboard = new ArrayList();
             List<InlineKeyboardButton> line1 = new ArrayList();
-                InlineKeyboardButton a = new InlineKeyboardButton(); a.setText("Precedente"); a.setCallbackData("prev");
+                InlineKeyboardButton a = new InlineKeyboardButton(); a.setText("⬅️"); a.setCallbackData("prev");
             line1.add(a);
-                InlineKeyboardButton b = new InlineKeyboardButton(); b.setText("Successiva"); b.setCallbackData("next");
+                InlineKeyboardButton b = new InlineKeyboardButton(); b.setText("➡️"); b.setCallbackData("next");
             line1.add(b);
-                if(!received) {
-                    InlineKeyboardButton c = new InlineKeyboardButton(); c.setText("News ricevuta"); c.setCallbackData("news_received");
-                    line1.add(c);
-                }
         keyboard.add(line1);
+        
+                if(!received) {
+                    List<InlineKeyboardButton> line2 = new ArrayList();
+                        InlineKeyboardButton c = new InlineKeyboardButton(); c.setText("News letta 👍"); c.setCallbackData("news_received");
+                        line2.add(c);
+                    keyboard.add(line2);
+                }
+        return inlineKeyboard.setKeyboard(keyboard);
+    }
+    private static InlineKeyboardMarkup lastNewsInline(boolean received) {
+        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
+        
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList();
+            List<InlineKeyboardButton> line1 = new ArrayList();
+                InlineKeyboardButton a = new InlineKeyboardButton(); a.setText("⬅️"); a.setCallbackData("prev");
+            line1.add(a);
+                InlineKeyboardButton b = new InlineKeyboardButton(); b.setText("*⃣"); b.setCallbackData("lastNews");
+            line1.add(b);
+        keyboard.add(line1);
+        
+                if(!received) {
+                    List<InlineKeyboardButton> line2 = new ArrayList();
+                        InlineKeyboardButton c = new InlineKeyboardButton(); c.setText("News letta 👍"); c.setCallbackData("news_received");
+                        line2.add(c);
+                    keyboard.add(line2);
+                }
+        return inlineKeyboard.setKeyboard(keyboard);
+    }
+    private static InlineKeyboardMarkup firstNewsInline(boolean received) {
+        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
+        
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList();
+            List<InlineKeyboardButton> line1 = new ArrayList();
+                InlineKeyboardButton a = new InlineKeyboardButton(); a.setText("*⃣"); a.setCallbackData("lastNews");
+            line1.add(a);
+                InlineKeyboardButton b = new InlineKeyboardButton(); b.setText("➡️"); b.setCallbackData("next");
+            line1.add(b);
+        keyboard.add(line1);
+        
+                if(!received) {
+                    List<InlineKeyboardButton> line2 = new ArrayList();
+                        InlineKeyboardButton c = new InlineKeyboardButton(); c.setText("News letta 👍"); c.setCallbackData("news_received");
+                        line2.add(c);
+                    keyboard.add(line2);
+                }
         return inlineKeyboard.setKeyboard(keyboard);
     }
     private static ReplyKeyboardMarkup getMainMenuKeyboard() {
