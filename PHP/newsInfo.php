@@ -43,6 +43,30 @@ $result = $conn->query($sql);
       <textarea style="width: 100%"><?php echo $news; ?></textarea>
       <br>
       <h1> VISUALIZZAZIONI </h1>
+
+        <table align="center">
+          <tr><th> ID </th><th> NOME </th><th> COGNOME </th></tr>
+
+        <?php
+
+        $sql =
+          "SELECT idUtente, nome, cognome
+           FROM Visualizzazioni_News v JOIN Utenti u ON v.Utenti_idUtente = u.idUtente
+           WHERE News_idNews=".$id;
+
+        $result = $conn->query($sql);
+
+          if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+              $idUtente = $row['idUtente'];
+              $nome  = $row['nome'];
+              $cognome = $row['cognome'];
+              echo '<tr><td>'.$idUtente.'</td><td>'.$nome.'</td><td>'.$cognome.'</td></tr>';
+            }
+          }
+          else echo '<tr><td colspan="3">Nessun risultato trovato. </td></tr>';
+        ?>
+      </table>
     </div> <!-- /form -->
   </body>
 </html>
