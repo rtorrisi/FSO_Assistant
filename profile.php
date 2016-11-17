@@ -17,7 +17,7 @@ $login_chatid = $row['chat_id'];
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Sign-Up/Login Form</title>
+    <title>FSO Assistant Manager</title>
     <link rel='stylesheet' href="css/font.css" type='text/css'>
     <link rel="stylesheet" href="css/style.css">
   </head>
@@ -38,29 +38,21 @@ $login_chatid = $row['chat_id'];
 
         <div id="prove">
           <ul class="tab2-group">
-            <li class="tab2 active" id="provet1"><a style="width: 33%" href="#prove1">Calendario Prove</a></li>
-            <li class="tab2" id="provet2"><a style="width: 34%" href="#prove2" onclick="loadAssenze()">Assenze</a></li>
-            <li class="tab2" id="provet3"><a style="width: 33%" href="#prove3">Brani Prove</a></li>
+            <li class="tab2 active" id="provet1"><a style="width: 50%" href="#prove1" >Brani Prove</a></li>
+            <li class="tab2" id="provet2"><a style="width: 50%" href="#prove2" onclick="loadAssenze()">Assenze</a></li>
           </ul>
 
           <div class="tab2-content">
 
             <div id="prove1">
-              <h1>Calendario Prove</h1>
-            </div>
+              <h1>Brani Prove</h1>
+            </div> <!-- /tab2 assenze-->
 
             <div id="prove2" style="display: none"><br>
-
               <div class="field-wrap">
                 <label> Search </label> <input type="text" id="search_assenze" required autocomplete="off"/>
               </div>
-
               <div id="assenze_results"></div>
-
-            </div> <!-- /tab2 assenze-->
-
-            <div id="prove3" style="display: none">
-              <h1>Brani Prove</h1>
             </div>
 
           </div><!-- /tab2-content-->
