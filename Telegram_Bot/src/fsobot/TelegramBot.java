@@ -15,11 +15,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.telegram.telegrambots.TelegramBotsApi;
-import org.telegram.telegrambots.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.api.methods.GetFile;
+import org.telegram.telegrambots.api.methods.send.SendAudio;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
@@ -41,15 +39,15 @@ import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 
 public class TelegramBot extends TelegramLongPollingBot {
 
-    public TelegramBot() { start(); }
+    public TelegramBot(Display window) { start(window); }
 
-    private void start() {
+    private void start(Display window) {
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
 	try {
             telegramBotsApi.registerBot(this);
-            System.out.println(BOT_USERNAME+" avviato.");
+            window.getStatusLabel().setText("avviato.");
         } catch (TelegramApiRequestException e) {
-            System.out.println(BOT_USERNAME+" non è riuscito ad avviarsi.");
+            window.getStatusLabel().setText("errore durante l'avvio.");
         }
     }
 
@@ -71,18 +69,25 @@ public class TelegramBot extends TelegramLongPollingBot {
                 {
                     String mess = message.getText().toLowerCase();
                     
-                               System.out.println(mess);
-
-                    if(mess.contains("menu")) sendMessage("Menù principale:", getMainMenuKeyboard(), chatID);
+                    // BASI #################################################
+                    if(mess.contains("b_")) sendBase(mess, chatID);
+                    else if(mess.contains("basi")) sendMessage("Menù Basi:", getBasiKeyboard(), chatID);
+                    else if(mess.contains("complete")) sendMessage("Lista Basi COMPLETE", getListaBasiKeyboard("completa"), chatID);
+                    else if(mess.contains("ritmiche")) sendMessage("Lista Basi RITMICHE", getListaBasiKeyboard("ritmica"), chatID);
+                    else if(mess.contains("archi")) sendMessage("Lista Basi ARCHI", getListaBasiKeyboard("archi"), chatID);
+                    else if(mess.contains("voci")) sendMessage("Lista Basi VOCI", getListaBasiKeyboard("voci"), chatID);
+                    
+                    // MENU #################################################
+                    else if(mess.contains("menu")) sendMessage("Menù principale:", getMainMenuKeyboard(), chatID);
                     else if(mess.contains("start")) sendMessage("Salve "+nome, getStartMenuKeyboard(), chatID);
                     else if(mess.contains("profilo")) sendProfile(username, chatID);
                     else if(mess.contains("news")) sendLastNews(username, chatID);
+                    
                     // INFO #################################################
                     else if(mess.contains("info")) sendMessage("Menù informazioni:", getInfoKeyboard(), chatID);
 
-                    else if(mess.contains("concerti")) sendMessage("Menù concerti:", getConcertsKeyboard(), chatID);
-                    //else if(mess.contains("tutti gli eventi"))
-                    //else if(mess.contains("prossimi eventi"))
+                    else if(mess.contains("concerti")) sendEvent(chatID);
+                    
                     //else if(mess.contains("brani prova"))
 
                     else if(mess.contains("rubrica")) sendRubrica(chatID);
@@ -97,8 +102,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                         sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha segnalato che mancherà alle prove! 🚨");
                     }
                     else if(mess.contains("annulla_segnalazione")) {
-                        removeAbsence(username, chatID);
-                        sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha rimosso la segnalazione di assenza! 🚨");
+                        boolean result = removeAbsence(username, chatID);
+                        if(result) sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha rimosso la segnalazione di assenza! 🚨");
+                        else sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha provato senza successo a rimuovere la segnalazione di assenza! 🚨");
                     }
                     else if(mess.contains("ritardo")) sendMessage("Desideri aggiungere l'orario previsto di arrivo?", getRitardoKeyboard(), chatID);
                     else if(mess.contains("non aggiungere orario")) {
@@ -166,6 +172,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             SendMessage sendMessageRequest = new SendMessage();
             sendMessageRequest.setChatId(chat_id);
             sendMessageRequest.setText(text);
+            sendMessageRequest.enableMarkdown(true);
             try { sendMessage(sendMessageRequest);
             } catch (TelegramApiException ex) {}
     }
@@ -173,6 +180,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             SendMessage sendMessageRequest = new SendMessage();
             sendMessageRequest.setChatId(chat_id);
             sendMessageRequest.setText(text);
+            sendMessageRequest.enableMarkdown(true);
             sendMessageRequest.setReplyMarkup(keyboard);
             try { sendMessage(sendMessageRequest);
             } catch (TelegramApiException ex) {}
@@ -181,6 +189,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             SendMessage sendMessageRequest = new SendMessage();
             sendMessageRequest.setChatId(chat_id);
             sendMessageRequest.setText(text);
+            sendMessageRequest.enableMarkdown(true);
             sendMessageRequest.setReplyMarkup(keyboard);
             try { sendMessage(sendMessageRequest);
             } catch (TelegramApiException ex) {}
@@ -313,28 +322,31 @@ public class TelegramBot extends TelegramLongPollingBot {
             ps.setString(1, username);
 	    ps.setString(2, chatID);
 
-	    if(ps.executeUpdate() == 1) ans+=" inviata con successo! 👍\n\n/annulla_segnalazione per annullare l'assenza segnalata!";
+	    if(ps.executeUpdate() == 1) ans+=" inviata con successo! 👍\n\n/annulla_segnalazione per annullare l'assenza segnalata!\n(Verrà segnalato agli amministratori)";
             ps.close();
 
         } catch(SQLException e) { ans+= " NON inviata con successo! 👎";}
 
         sendMessage(ans, getMainMenuKeyboard(), chatID);
     }
-    private void removeAbsence(String username, String chatID) {
-        String ans="Assenza";
-
+    private boolean removeAbsence(String username, String chatID) {
         PreparedStatement ps;
         try {
             ps = database.getConnection().prepareStatement("UPDATE Utenti SET assenze=assenze-1 WHERE username=? AND chat_id=?");
             ps.setString(1, username);
 	    ps.setString(2, chatID);
 
-	    if(ps.executeUpdate() == 1) ans+=" rimossa con successo! 👍";
+	    if(ps.executeUpdate() == 1) {
+                sendMessage("Assenza rimossa con successo! 👍", getMainMenuKeyboard(), chatID);
+                return true;
+            }
             ps.close();
+            return false;
 
-        } catch(SQLException e) { ans+= " NON rimossa con successo! 👎";}
-
-        sendMessage(ans, getMainMenuKeyboard(), chatID);
+        } catch(SQLException e) {
+            sendMessage("Assenza NON rimossa con successo! 👎", getMainMenuKeyboard(), chatID);
+            return false;
+        }
     }
         
     private void saveImage(List<PhotoSize> photos) {
@@ -365,19 +377,46 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendPhoto(sendPhotoRequest);
             is.close();
 	}
-    private void sendImageById(String chat_id, String image_id) throws TelegramApiException {
+    private void sendImageById(String chat_id, String image_id) {
+        try {
             SendPhoto sendPhotoRequest = new SendPhoto();
             sendPhotoRequest.setChatId(chat_id);
             sendPhotoRequest.setPhoto(image_id);
             sendPhoto(sendPhotoRequest);
-	}
+        } catch(TelegramApiException ex) {}
+    }
+    private void sendAudioById(String chat_id, String audio_id) {
+        try {
+            SendAudio sendAudioRequest = new SendAudio();
+            sendAudioRequest.setChatId(chat_id);
+            sendAudioRequest.setAudio(audio_id);
+            sendAudio(sendAudioRequest);
+        } catch (TelegramApiException ex) {}
+    }
     private void sendDocumentById(String chat_id, String file_id) {
+        try {
             SendDocument sendDocumentRequest = new SendDocument();
             sendDocumentRequest.setChatId(chat_id);
             sendDocumentRequest.setDocument(file_id);
-            try { sendDocument(sendDocumentRequest);
-            } catch (TelegramApiException ex) {}
-        }
+            sendDocument(sendDocumentRequest);
+        } catch (TelegramApiException ex) {}
+    }
+    
+    private void sendBase(String mess, String chat_id) {
+        String codice = mess.substring(mess.lastIndexOf("(")+1, mess.length()-1);
+        
+        PreparedStatement ps;
+            try {
+                ps = database.getConnection().prepareStatement("SELECT file_id FROM Basi WHERE codice = ?");
+                ps.setString(1, codice);
+
+	    	ResultSet rs = ps.executeQuery();
+                while(rs.next()) {
+                    String file_id = rs.getString("file_id");
+                    sendAudioById(chat_id, file_id);
+                }
+            } catch(SQLException e) { sendMessage("Errore durante l'invio, riprova", chat_id); }
+    }
     
     private void saveNumber(Contact contact) {
         String number = contact.getPhoneNumber().substring(2);
@@ -397,13 +436,31 @@ public class TelegramBot extends TelegramLongPollingBot {
         
         sendMessage(ans, getMainMenuKeyboard(), chatID);
     }
+    private void sendEvent(String chatID) {
+        String ans = "";
+        ResultSet rs = database.getQueryResult("SELECT nome_concerto, data_concerto, info, nome_città, Provincia FROM Concerti co JOIN Città ci ON co.Città_idCittà = ci.idCittà ORDER BY data_concerto");
+        
+        try{
+            while(rs.next()) {
+                ans += "*" + rs.getString("nome_concerto") + "*\n";
+                String data = rs.getString("data_concerto");
+                String day = data.substring(8, 10);
+                String month = data.substring(5, 7);
+                String year = data.substring(0, 4);
+                ans += "_Data:_ " + day + "/" + month + "/" + year + "\n";
+                ans += "_Luogo:_ " + rs.getString("nome_città") + " (" + rs.getString("Provincia") + ")\n";
+                ans += "_Info:_ " + rs.getString("info") + "\n\n";
+            }
+        } catch(SQLException e) { e.getMessage(); }
+        
+        sendMessage(ans, getInfoKeyboard(),chatID);
+    }
     private void sendRubrica(String chatID) {
             String ans = "";
             ResultSet rs = database.getQueryResult("select * from Utenti order by nome");
 
             try { while(rs.next()) { ans += rs.getString("nome") + " "+ rs.getString("cognome") + " " + rs.getString("telefono") + "\n"; }
             } catch(SQLException e) {}
-
             sendMessage(ans, getInfoKeyboard(),chatID);
     }
     private void sendUsersNumber(String mess, String chatID) {
@@ -545,6 +602,63 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             return replyKeyboardMarkup;
         }
+    private static ReplyKeyboardMarkup getBasiKeyboard() {
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+            replyKeyboardMarkup.setSelective(true);
+            replyKeyboardMarkup.setResizeKeyboard(true);
+            replyKeyboardMarkup.setOneTimeKeyboad(false);
+            
+        List<KeyboardRow> keyboard = new ArrayList();
+            
+            KeyboardRow keyboardMenuRow = new KeyboardRow(); keyboardMenuRow.add("📱 Menu");
+            KeyboardRow keyboard1Row = new KeyboardRow();
+                keyboard1Row.add("🎹 Complete");
+            KeyboardRow keyboard2Row = new KeyboardRow();
+                keyboard2Row.add("🎸 Ritmiche");
+            KeyboardRow keyboard3Row = new KeyboardRow();
+                keyboard3Row.add("🎻 Archi");
+            KeyboardRow keyboard4Row = new KeyboardRow();
+                keyboard4Row.add("🎤 Voci");
+            
+            keyboard.add(keyboardMenuRow);
+            keyboard.add(keyboard1Row);
+            keyboard.add(keyboard2Row);
+            keyboard.add(keyboard3Row);
+            keyboard.add(keyboard4Row);
+
+            replyKeyboardMarkup.setKeyboard(keyboard);
+
+            return replyKeyboardMarkup;
+    }
+    private static ReplyKeyboardMarkup getListaBasiKeyboard(String tipo) {
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+            replyKeyboardMarkup.setSelective(true);
+            replyKeyboardMarkup.setResizeKeyboard(true);
+            replyKeyboardMarkup.setOneTimeKeyboad(false);
+            
+            List<KeyboardRow> keyboard = new ArrayList();
+            
+            KeyboardRow keyboard1Row = new KeyboardRow();
+                keyboard1Row.add("📱 Menu");
+                keyboard1Row.add("🎧 Tipo Basi");
+                keyboard.add(keyboard1Row);
+            
+            PreparedStatement ps;
+            try {
+                ps = database.getConnection().prepareStatement("SELECT * FROM Basi ba JOIN Brani br ON ba.Brani_idBrano = br.idBrano WHERE tipologia = ? ORDER BY titolo");
+                ps.setString(1, tipo);
+
+	    	ResultSet rs = ps.executeQuery();
+                while(rs.next()) {
+                    KeyboardRow keyboardRow = new KeyboardRow();
+                    keyboardRow.add( rs.getString("titolo") + " (" + rs.getString("codice") + ")");
+                    keyboard.add(keyboardRow);                    
+                }
+            } catch(SQLException e) {}
+
+            replyKeyboardMarkup.setKeyboard(keyboard);
+            return replyKeyboardMarkup;
+    }
     private static ReplyKeyboardMarkup getInfoKeyboard() {
             ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
             replyKeyboardMarkup.setSelective(true);
@@ -571,22 +685,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             keyboard.add(keyboard3Row);
             keyboard.add(keyboard4Row);
             keyboard.add(keyboard5Row);
-
-            replyKeyboardMarkup.setKeyboard(keyboard);
-
-            return replyKeyboardMarkup;
-        }
-    private static ReplyKeyboardMarkup getConcertsKeyboard() {
-            ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-            replyKeyboardMarkup.setSelective(true);
-            replyKeyboardMarkup.setResizeKeyboard(true);
-            replyKeyboardMarkup.setOneTimeKeyboad(false);
-
-            List<KeyboardRow> keyboard = new ArrayList();
-
-            KeyboardRow keyboardMenuRow = new KeyboardRow(); keyboardMenuRow.add("📱 Menu"); keyboard.add(keyboardMenuRow);
-            KeyboardRow keyboard1Row = new KeyboardRow(); keyboard1Row.add("📅 Tutti gli eventi"); keyboard.add(keyboard1Row);
-            KeyboardRow keyboard2Row = new KeyboardRow(); keyboard2Row.add("📅 Prossimi eventi"); keyboard.add(keyboard2Row);
 
             replyKeyboardMarkup.setKeyboard(keyboard);
 
