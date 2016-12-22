@@ -36,6 +36,8 @@ $result = $conn->query($sql);
         <tr><td><?php echo $idBrano; ?></td><td><?php echo $titolo; ?></td><td><?php echo $autore; ?></td><td><?php echo $num_basi; ?></td></tr>
       </table>
       <br>
+      <input type="button" onclick="myf(<?php echo $id; ?>)" value="Cancella Brano (e Basi)" />
+      <br>
 
       <h1> BASI </h1>
 
@@ -65,4 +67,10 @@ $result = $conn->query($sql);
       </table>
     </div> <!-- /form -->
   </body>
+  <script>
+    function myf(id) {
+      var b = confirm("Vuoi cancellare il Brano e le relative Basi?");
+      if(b) window.open("deleteBrano.php?idBrano="+id, "_self");
+    }
+  </script>
 </html>
