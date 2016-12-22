@@ -16,6 +16,11 @@ function loadRubrica() {
           $("#rubrica_results").html(data);
         });
 }
+function loadBrani() {
+        $.post('PHP/db_search.php',{value:"bra"}, function(data){
+          $("#brani_results").html(data);
+        });
+}
 function loadAssenze() {
         $.post('PHP/db_search.php',{value:"ass"}, function(data){
           $("#assenze_results").html(data);
@@ -48,7 +53,22 @@ function searchNewsId(row) {
   );
 }
 
+function searchBranoId(row) {
+  window.open(
+  "PHP/braniInfo.php?idBrano="+$(row).attr("id"),
+  "_blank"
+  );
+}
+
 $(function() {
+
+        $("#search_brani").keyup(function(){
+          var value = $("#search_brani").val();
+          $.post('PHP/db_search.php',{value:"bra"+value}, function(data){
+            $("#brani_results").html(data);
+          });
+        });
+
         $("#search_rubrica").keyup(function(){
           var value = $("#search_rubrica").val();
           $.post('PHP/db_search.php',{value:"rub"+value}, function(data){

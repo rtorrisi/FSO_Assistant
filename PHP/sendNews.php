@@ -44,7 +44,7 @@ if($_POST){
         $newsID = $row['ID'];
         $message = "#news".$newsID."\n\n".$news;
 
-        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1 OR idUtente=6";
+        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1";
         $rs = $conn->query($sql);
 
           while ($row = $rs->fetch_assoc()) {
@@ -64,7 +64,7 @@ if($_POST){
 
         $img = curl_file_create('../Data/website_img/file.'.$ext);
 
-        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1  OR idUtente=6";
+        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1";
         $rs = $conn->query($sql);
 
         $count=0;
@@ -117,7 +117,7 @@ if($_POST){
 
         $file = curl_file_create('../Data/website_img/file.'.$ext);
 
-        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1  OR idUtente=6";
+        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1";
         $rs = $conn->query($sql);
 
         $count=0;

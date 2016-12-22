@@ -26,9 +26,9 @@ $login_chatid = $row['chat_id'];
     <div class="form" style="max-width: 600px">
 
       <ul class="tab-group">
-        <li class="tab active"><a style="width: 16.66%" href="#prove">Prove</a></li>
-        <li class="tab"><a style="width: 16.66%" href="#news">News</a></li>
-        <li class="tab"><a style="width: 16.66%" href="#basi">Basi</a></li>
+        <li class="tab active"><a style="width: 16.66%" href="#news">News</a></li>
+        <li class="tab"><a style="width: 16.66%" href="#prove"  onclick="loadAssenze()">Prove</a></li>
+        <li class="tab"><a style="width: 16.66%" href="#brani" onclick="loadBrani()">Brani</a></li>
         <li class="tab"><a style="width: 16.66%" href="#concerti">Concerti</a></li>
         <li class="tab"><a style="width: 16.66%" href="#rubrica" onclick="loadRubrica()">Rubrica</a></li>
         <li class="tab"><a style="width: 16.66%" href="#profilo">Profilo</a></li>
@@ -36,40 +36,20 @@ $login_chatid = $row['chat_id'];
 
       <div class="tab-content">
 
-        <div id="prove">
-          <ul class="tab2-group">
-            <li class="tab2 active" id="provet1"><a style="width: 50%" href="#prove1" >Brani Prove</a></li>
-            <li class="tab2" id="provet2"><a style="width: 50%" href="#prove2" onclick="loadAssenze()">Assenze</a></li>
-          </ul>
 
-          <div class="tab2-content">
-
-            <div id="prove1">
-              <h1>Brani Prove</h1>
-            </div> <!-- /tab2 assenze-->
-
-            <div id="prove2" style="display: none"><br>
-              <div class="field-wrap">
-                <label> Search </label> <input type="text" id="search_assenze" required autocomplete="off"/>
-              </div>
-              <div id="assenze_results"></div>
-            </div>
-
-          </div><!-- /tab2-content-->
-        </div><!-- /prove-->
 
 <!-- NEWS -->
-  <div id="news" style="display: none">
+  <div id="news">
 
       <ul class="tab2-group">
-        <li class="tab2" id="newst1"><a style="width: 50%" href="#news1">Invia news</a></li>
+        <li class="tab2 active" id="newst1"><a style="width: 50%" href="#news1">Invia news</a></li>
         <li class="tab2" id="newst2"><a style="width: 50%" href="#news2" onclick="loadNews()">Visualizza news</a></li>
       </ul>
 
     <div class="tab2-content">
 
 <!-- INVIA NEWS -->
-      <div id="news1" style="display: none">
+      <div id="news1">
 
         <div id="news_result"> <h1>Invia News!</h1> </div>
 
@@ -108,24 +88,70 @@ $login_chatid = $row['chat_id'];
 
     </div>
   </div>
-<!-- /NEWS -->
 
-        <div id="basi" style="display: none">
-          <h1>Basi!</h1>
+  <div id="prove" style="display: none">
+    <ul class="tab2-group">
+      <li class="tab2 active" id="provet1"><a style="width: 50%" href="#prove1" > Assenze </a></li>
+      <li class="tab2" id="provet2"><a style="width: 50%" href="#prove2"> Brani Prove </a></li>
+    </ul>
+
+    <div class="tab2-content">
+
+      <div id="prove1"><br>
+        <div class="field-wrap">
+          <label> Search </label> <input type="text" id="search_assenze" required autocomplete="off"/>
         </div>
+        <div id="assenze_results"></div>
+      </div>
 
-        <div id="concerti" style="display: none">
-          <h1> Concerti! </h1>
-        </div> <!-- /concerti-->
+      <div id="prove2"  style="display: none">
+          <h1>Brani Prove</h1>
+        </div> <!-- /tab2 assenze-->
 
-        <div id="rubrica" style="display: none"><br>
-          <div class="field-wrap">
-            <label> Search </label> <input type="text" id="search_rubrica" required autocomplete="off"/>
-          </div>
+    </div><!-- /tab2-content-->
+  </div><!-- /prove-->
 
-          <div id="rubrica_results"></div>
+<!-- BRANI -->
+<div id="brani" style="display: none">
 
-        </div> <!-- /rubrica -->
+      <ul class="tab2-group">
+        <li class="tab2 active" id="branit1"><a style="width: 50%" href="#brani1"> Visualizza Brani</a></li>
+        <li class="tab2" id="branit2"><a style="width: 50%" href="#brani2"> Inserisci Brani</a></li>
+      </ul>
+
+  <div class="tab2-content">
+
+    <div id="brani1"><br>
+
+      <div class="field-wrap">
+        <label> Search </label> <input type="text" id="search_brani" required autocomplete="off"/>
+      </div>
+
+      <div id="brani_results"></div>
+    </div> <!-- /tab2 assenze-->
+
+    <div id="brani2" style="display: none">
+      <h1>Page 2</h1>
+    </div>
+
+  </div><!-- /tab2-content-->
+</div>
+
+<!-- CONCERTI -->
+<div id="concerti" style="display: none">
+  <h1> Concerti! </h1>
+</div> <!-- /concerti-->
+
+<!-- RUBRICA -->
+<div id="rubrica" style="display: none"><br>
+
+  <div class="field-wrap">
+    <label> Search </label> <input type="text" id="search_rubrica" required autocomplete="off"/>
+  </div>
+
+  <div id="rubrica_results"></div>
+
+</div>
 
         <div id="profilo" style="display: none">
             <?php

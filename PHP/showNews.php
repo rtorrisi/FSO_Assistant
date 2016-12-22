@@ -14,9 +14,10 @@ if($data_start=="start" || $data_start=="today" || $data_end=="today") {
   $result = $conn->query($sql);
   if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
+      $actual_data = date('Y-m-d');
       if($data_start=="start") $data_start = $row['min_data'];
-      else if($data_start=="today") $data_start = $row['max_data'];
-      if($data_end=="today") $data_end = $row['max_data'];
+      else if($data_start=="today") $data_start = $actual_data;
+      if($data_end=="today") $data_end = $actual_data;
   }
 }
 

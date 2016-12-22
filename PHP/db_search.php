@@ -67,6 +67,33 @@ switch ($searchType) {
     }
   } else { echo '<tr><td colspan="3">Nessun risultato trovato. </td></tr>'; }
   break;
+
+  case 'bra':
+  $sql = "
+    SELECT idBrano, titolo, autore, count(idBasi) num_basi
+    FROM Brani LEFT JOIN Basi ON Brani_idBrano = idBrano
+    WHERE titolo LIKE '%" .$value. "%' OR autore LIKE '%" .$value. "%'
+    GROUP BY idBrano
+    ORDER BY titolo";
+  $result = $conn->query($sql);
+
+  echo '
+  <tr>
+    <th> ID </th><th> TITOLO </th><th> AUTORE </th><th> #BASI </th>
+  </tr>';
+
+  if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+      echo '
+      <tr id="'.$row["idBrano"].'" onclick="searchBranoId(this)">
+        <td style="padding: 0px 20px 0px 20px">'.$row["idBrano"].'</td>
+        <td align="left">'.$row["titolo"].'</td>
+        <td>'.$row["autore"].'</td>
+        <td>'.$row["num_basi"].'</td>
+      </tr>';
+    }
+  } else { echo '<tr><td colspan="4">Nessun risultato trovato. </td></tr>'; }
+  break;
 }
 
 echo '</table>';
