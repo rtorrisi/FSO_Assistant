@@ -89,9 +89,10 @@ $login_chatid = $row['chat_id'];
     </div>
   </div>
 
+<!-- PROVE -->
   <div id="prove" style="display: none">
     <ul class="tab2-group">
-      <li class="tab2 active" id="provet1"><a style="width: 50%" href="#prove1" > Assenze </a></li>
+      <li class="tab2 active" id="provet1"><a style="width: 50%" href="#prove1" onclick="loadAssenze()"> Assenze </a></li>
       <li class="tab2" id="provet2"><a style="width: 50%" href="#prove2"> Brani Prove </a></li>
     </ul>
 
@@ -115,27 +116,43 @@ $login_chatid = $row['chat_id'];
 <div id="brani" style="display: none">
 
       <ul class="tab2-group">
-        <li class="tab2 active" id="branit1"><a style="width: 50%" href="#brani1"> Visualizza Brani</a></li>
+        <li class="tab2 active" id="branit1"><a style="width: 50%" href="#brani1" onclick="loadBrani()"> Visualizza Brani</a></li>
         <li class="tab2" id="branit2"><a style="width: 50%" href="#brani2"> Inserisci Brani</a></li>
       </ul>
 
   <div class="tab2-content">
 
+    <!-- VISUALIZZA BRANI -->
     <div id="brani1"><br>
 
       <div class="field-wrap">
         <label> Search </label> <input type="text" id="search_brani" required autocomplete="off"/>
       </div>
-
       <div id="brani_results"></div>
-    </div> <!-- /tab2 assenze-->
 
+    </div> <!-- /BRANI1 -->
+
+    <!-- INSERISCI BRANI -->
     <div id="brani2" style="display: none">
-      <h1>Page 2</h1>
-    </div>
 
-  </div><!-- /tab2-content-->
-</div>
+      <div id="newBrano_result"> <h1> Inserisci nuovo brano! </h1> </div>
+      <form id="brani_form" action="addBrano.php" method="post">
+        <div class="field-wrap">
+          <label> Titolo <span class="req">*</span></label>
+          <input type="text" name="titolo" required autocomplete="off"/>
+        </div>
+        <div class="field-wrap">
+          <label> Autore </label>
+          <input type="text" name="autore"/>
+        </div>
+        <button type="submit" class="button button-block"/> Aggiungi Brano </button>
+      </form>
+
+    </div> <!-- /BRANI2 -->
+
+  </div>
+
+</div><!-- /BRANI-->
 
 <!-- CONCERTI -->
 <div id="concerti" style="display: none">
@@ -169,7 +186,7 @@ $login_chatid = $row['chat_id'];
 
     <script src="js/form.js"></script>
     <script src="js/index.js"></script>
-    <script src="js/sendNews.js"></script>
+    <script src="js/ajax_insert_sendNews.js"></script>
     <script src="js/ajax_search_update.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
   </body>

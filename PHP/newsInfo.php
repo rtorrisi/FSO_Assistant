@@ -1,5 +1,8 @@
 <?php
 include 'db_connection.php';
+session_start();
+$user = $_SESSION['username'];
+if(!isset($user)) header("Location: ../index.php");
 
 $id = $_GET['idNews'];
 

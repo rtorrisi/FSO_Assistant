@@ -12,16 +12,19 @@ function subAssenza(but, id) {
 }
 
 function loadRubrica() {
+        $("#search_rubrica").val('');
         $.post('PHP/db_search.php',{value:"rub"}, function(data){
           $("#rubrica_results").html(data);
         });
 }
 function loadBrani() {
+        $("#search_brani").val('');
         $.post('PHP/db_search.php',{value:"bra"}, function(data){
           $("#brani_results").html(data);
         });
 }
 function loadAssenze() {
+        $("#search_assenze").val('');
         $.post('PHP/db_search.php',{value:"ass"}, function(data){
           $("#assenze_results").html(data);
         });

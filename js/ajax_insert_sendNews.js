@@ -44,3 +44,30 @@ $("#news_form").submit(function(e){
 	  }
   });
   });
+
+  $("#brani_form").submit(function(e){
+    e.preventDefault();
+    $.ajax({
+      url : "PHP/addBrano.php",
+  		type: "post",
+  		data : new FormData(this),
+  		dataType : "json",
+  		contentType: false,
+  		cache: false,
+  		processData:false
+  	})
+    .done(function(res){
+      if(res.type == "done"){
+        $("#newBrano_result").html('<div class="success">'+ res.text +"</div>");
+        setTimeout(function() {
+          $("#newBrano_result").html('<h1>Inserisci nuovo brano!</h1>');
+        }, 3000);
+      }
+      else if(res.type == "error"){
+        $("#newBrano_result").html('<div class="error">'+ res.text +"</div>");
+        setTimeout(function() {
+          $("#newBrano_result").html('<h1>Inserisci nuovo brano!</h1>');
+        }, 3000);
+  	  }
+    });
+    });
