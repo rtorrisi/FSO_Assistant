@@ -1,8 +1,6 @@
 <?php
 include 'db_connection.php';
-session_start();
-$user = $_SESSION['username'];
-if(!isset($user)) header("Location: ../index.php");
+include 'session_start.php';
 
 $MAX_ASSENZE = 5;
 

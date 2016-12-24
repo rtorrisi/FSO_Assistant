@@ -1,5 +1,6 @@
 <?php
 include 'db_connection.php';
+include 'session_start.php';
 
 $id = $_GET['idNews'];
 

@@ -1,8 +1,6 @@
 <?php
 include 'db_connection.php';
-session_start();
-$user = $_SESSION['username'];
-if(!isset($user)) header("Location: ../index.php");
+include 'session_start.php';
 
 $id = $_GET['idBrano'];
 
@@ -50,7 +48,7 @@ $result = $conn->query($sql);
         <?php
 
         $sql =
-          "SELECT idBasi, file_id, tipologia, codice
+          "SELECT idBasi, file_id, tipologia
           FROM Brani JOIN Basi ON Brani_idBrano = idBrano
           WHERE idBrano =".$id;
 
@@ -61,19 +59,20 @@ $result = $conn->query($sql);
               $idBase = $row['idBasi'];
               $file_id = $row['file_id'];
               $tipo = $row['tipologia'];
-              $codice = $row['codice'];
-              echo '<tr><td>'.$idBase.'</td><td>'.$file_id.'</td><td>'.$tipo.'</td><td>'.$codice.'</td></tr>';
+              echo '<tr><td>'.$idBase.'</td><td>'.$file_id.'</td><td>'.$tipo.'</td><td>b_'.$idBase.'</td></tr>';
             }
           }
           else echo '<tr><td colspan="4">Nessuna base trovata. </td></tr>';
         ?>
       </table>
+
     </div> <!-- /form -->
-  </body>
   <script>
     function myf(id) {
       var b = confirm("Vuoi cancellare il Brano e le relative Basi?");
       if(b) window.open("deleteBrano.php?idBrano="+id, "_self");
     }
   </script>
+
+</body>
 </html>

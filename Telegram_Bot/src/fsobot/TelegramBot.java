@@ -403,12 +403,12 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
     
     private void sendBase(String mess, String chat_id) {
-        String codice = mess.substring(mess.lastIndexOf("(")+1, mess.length()-1);
+        String idBase = mess.substring(mess.lastIndexOf("(")+3, mess.length()-1);
         
         PreparedStatement ps;
             try {
-                ps = database.getConnection().prepareStatement("SELECT file_id FROM Basi WHERE codice = ?");
-                ps.setString(1, codice);
+                ps = database.getConnection().prepareStatement("SELECT file_id FROM Basi WHERE idBasi = ?");
+                ps.setString(1, idBase);
 
 	    	ResultSet rs = ps.executeQuery();
                 while(rs.next()) {
@@ -645,13 +645,13 @@ public class TelegramBot extends TelegramLongPollingBot {
             
             PreparedStatement ps;
             try {
-                ps = database.getConnection().prepareStatement("SELECT * FROM Basi ba JOIN Brani br ON ba.Brani_idBrano = br.idBrano WHERE tipologia = ? ORDER BY titolo");
+                ps = database.getConnection().prepareStatement("SELECT * FROM Basi JOIN Brani ON Brani_idBrano = idBrano WHERE tipologia = ? ORDER BY titolo");
                 ps.setString(1, tipo);
 
 	    	ResultSet rs = ps.executeQuery();
                 while(rs.next()) {
                     KeyboardRow keyboardRow = new KeyboardRow();
-                    keyboardRow.add( rs.getString("titolo") + " (" + rs.getString("codice") + ")");
+                    keyboardRow.add( rs.getString("titolo") + " (b_" + rs.getInt("idBasi") + ")");
                     keyboard.add(keyboardRow);                    
                 }
             } catch(SQLException e) {}

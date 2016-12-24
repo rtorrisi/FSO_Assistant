@@ -1,4 +1,5 @@
 <?php
+
 include 'PHP/db_connection.php';
 
 session_start();
@@ -116,8 +117,9 @@ $login_chatid = $row['chat_id'];
 <div id="brani" style="display: none">
 
       <ul class="tab2-group">
-        <li class="tab2 active" id="branit1"><a style="width: 50%" href="#brani1" onclick="loadBrani()"> Visualizza Brani</a></li>
-        <li class="tab2" id="branit2"><a style="width: 50%" href="#brani2"> Inserisci Brani</a></li>
+        <li class="tab2 active" id="branit1"><a style="width: 33%" href="#brani1" onclick="loadBrani()"> Visualizza Brani</a></li>
+        <li class="tab2" id="branit2"><a style="width: 34%" href="#brani2"> Inserisci Brani</a></li>
+        <li class="tab2" id="branit3"><a style="width: 33%" href="#brani3" onclick="resetBasiField()"> Inserisci Base</a></li>
       </ul>
 
   <div class="tab2-content">
@@ -149,6 +151,31 @@ $login_chatid = $row['chat_id'];
       </form>
 
     </div> <!-- /BRANI2 -->
+
+    <!-- INSERISCI BASE -->
+    <div id="brani3" style="display: none">
+      <div id="newBase_result"> <h1> Inserisci nuova base! </h1> </div>
+        <form id="basi_form" action="addBase.php" method="post">
+          <div class="top-row">
+          <div class="field-wrap">
+            <label> idBrano  <span class="req">*</span></label>
+            <input id="idBrano" type="text" name="idBrano" required autocomplete="off"/>
+          </div>
+          <div class="field-wrap">
+            <select id="tipologia" name="type">
+              <option value="completa"> Completa </option>
+              <option value="ritmica"> Ritmica </option>
+              <option value="archi"> Archi </option>
+              <option value="voci"> Voci </option>
+            </select>
+          </div>
+        </div>
+        <div class="field-wrap">
+          <input  id="audio" type="file" name="file_attach[]"/>
+        </div>
+        <button type="submit" class="button button-block"/> INSERISCI BASE </button>
+      </form>
+    </div><!-- /BRANI3 -->
 
   </div>
 
