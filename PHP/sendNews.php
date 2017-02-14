@@ -24,21 +24,19 @@ $markup = json_encode($keyboard, true);
 
 
 if($_POST){
-
+    $sended=1;
     $type = $_POST['type'];
     $news = $_POST['message'];
 
-    $file_to_db = addslashes(file_get_contents($_FILES['file_attach']['tmp_name'][0]));
-    $info = pathinfo($_FILES['file_attach']['name'][0]);
-    $ext = $info['extension'];
-    $target = '../Data/website_img/file.'.$ext;
-    move_uploaded_file($_FILES['file_attach']['tmp_name'][0], $target);
-    $sended=1;
+    if($type!="text") {
+      $file_to_db = addslashes(file_get_contents($_FILES['file_attach']['tmp_name'][0]));
+      $info = pathinfo($_FILES['file_attach']['name'][0]);
+      $ext = $info['extension'];
+      $target = '../Data/website_img/file.'.$ext;
+      move_uploaded_file($_FILES['file_attach']['tmp_name'][0], $target);
+    }
 
       if($type=="text") {
-        $sql = "INSERT INTO News (news, estensione, data_news, Admin_username) VALUES ('$news', 'testo', '$data', '$login_username')";
-        $conn->query($sql);
-
         $sql = mysqli_query($conn,"SELECT max(idNews) AS ID FROM News");
         $row=mysqli_fetch_array($sql);
         $newsID = $row['ID'];
@@ -51,12 +49,14 @@ if($_POST){
             $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message)."&reply_markup=".$markup);
             if(strlen($result)==0) $sended=0;
           }
+
+        if($sended) {
+          $sql = "INSERT INTO News (news, estensione, data_news, Admin_username) VALUES ('$news', 'testo', '$data', '$login_username')";
+          $conn->query($sql);
+        }
       }
 
       else if($type=="image") {
-        $sql = "INSERT INTO News (news, allegato, estensione, data_news, Admin_username) VALUES ('$news', '$file_to_db', '$ext', '$data','$login_username')";
-        $conn->query($sql);
-
         $sql = mysqli_query($conn,"SELECT max(idNews) AS ID FROM News");
         $row=mysqli_fetch_array($sql);
         $newsID = $row['ID'];
@@ -95,21 +95,23 @@ if($_POST){
             if(strlen($result)==0) $sended=0;
             curl_close ($ch);
 
-            $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message)."&reply_markup=".$markup);
-            if(strlen($result)==0) $sended=0;
-
             $array = json_decode($result, true);
             $image_id = $array['result']['photo'][0]['file_id'];
-          }
 
+            $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message)."&reply_markup=".$markup);
+
+            if(strlen($result)==0) $sended=0;
+          }
           $count++;
+        }
+
+        if($sended) {
+          $sql = "INSERT INTO News (news, allegato, estensione, data_news, Admin_username) VALUES ('$news', '$file_to_db', '$ext', '$data','$login_username')";
+          $conn->query($sql);
         }
       }
 
       else {
-        $sql = "INSERT INTO News (news, allegato, estensione, data_news, Admin_username) VALUES ('$news', '$file_to_db', '$ext', '$data','$login_username')";
-        $conn->query($sql);
-
         $sql = mysqli_query($conn,"SELECT max(idNews) AS ID FROM News");
         $row=mysqli_fetch_array($sql);
         $newsID = $row['ID'];
@@ -147,14 +149,17 @@ if($_POST){
             if(strlen($result)==0) $sended=0;
             curl_close ($ch);
 
-            $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message)."&reply_markup=".$markup);
-            if(strlen($result)==0) $sended=0;
-
             $array = json_decode($result, true);
             $document_id = $array['result']['document']['file_id'];
-          }
 
+            $result = file_get_contents($botUrl."sendmessage?chat_id=".$row["chat_id"]."&text=".urlencode($message)."&reply_markup=".$markup);
+            if(strlen($result)==0) $sended=0;
+          }
           $count++;
+        }
+        if($sended) {
+          $sql = "INSERT INTO News (news, allegato, estensione, data_news, Admin_username) VALUES ('$news', '$file_to_db', '$ext', '$data','$login_username')";
+          $conn->query($sql);
         }
       }
 

@@ -37,13 +37,13 @@ $("#news_form").submit(function(e){
 	})
   .done(function(res){
     if(res.type == "done"){
-      $("#news_result").html('<div class="success">'+ res.text +"</div>");
+      $("#news_result").html('<div class="success">'+ res.text +'</div>');
       setTimeout(function() {
         $("#news_result").html('<h1>Invia News!</h1>');
       }, 3000);
     }
     else if(res.type == "error"){
-      $("#news_result").html('<div class="error">'+ res.text +"</div>");
+      $("#news_result").html('<div class="error">'+ res.text +'</div>');
       setTimeout(function() {
         $("#news_result").html('<h1>Invia News!</h1>');
       }, 3000);
