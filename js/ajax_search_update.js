@@ -39,6 +39,16 @@ function loadNews() {
         });
 }
 
+function loadConcerti() {
+        $.post('PHP/showConcertOption.php',{}, function(data){
+          $("#ConcertiOption_result").html(data);
+        });
+
+        $.post('PHP/showConcert.php',{city:'all', admin:'all', data_start:'start', data_end:'today'}, function(data){
+          $("#showConcert_result").html(data);
+        });
+}
+
 function newsOptionChanged() {
     var var_type = $("#opt_type").find(":selected").val();
     var var_admin = $("#opt_admin").find(":selected").val();
@@ -46,6 +56,16 @@ function newsOptionChanged() {
     var var_end = $("#opt_dataEnd").find(":selected").val();
     $.post('PHP/showNews.php',{estensione:var_type, admin:var_admin, data_start:var_start, data_end:var_end}, function(data){
       $("#showNews_result").html(data);
+    });
+}
+
+function ConcertOptionChanged() {
+    var var_city = $("#opt_city").find(":selected").val();
+    var var_admin = $("#opt_admin").find(":selected").val();
+    var var_start = $("#opt_dataStart").find(":selected").val();
+    var var_end = $("#opt_dataEnd").find(":selected").val();
+    $.post('PHP/showConcert.php',{city:var_city, admin:var_admin, data_start:var_start, data_end:var_end}, function(data){
+      $("#showConcert_result").html(data);
     });
 }
 

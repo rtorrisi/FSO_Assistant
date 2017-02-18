@@ -170,7 +170,27 @@ $login_chatid = $row['chat_id'];
 
 <!-- CONCERTI -->
 <div id="concerti" style="display: none">
-  <h1> Concerti! </h1>
+
+  <ul class="tab2-group">
+    <li class="tab2 active" id="concertit1"><a style="width: 50%" href="#concerti1">Inserisci concerti</a></li>
+    <li class="tab2" id="concertit2"><a style="width: 50%" href="#concerti2" onclick="loadConcerti()">Visualizza concerti</a></li>
+  </ul>
+
+<div class="tab2-content">
+
+<!-- INSERISCI CONCERTO -->
+  <div id="concerti1">
+
+    <div id="concerti_result"> <h1>Inserisci Concerto!</h1> </div>
+  </div>
+<!-- VISUALIZZA CONCERTO -->
+  <div id="concerti2" style="display: none">
+    <div id="ConcertiOption_result"> </div>
+    <div id="showConcert_result"> </div>
+  </div>
+
+
+</div>
 </div> <!-- /concerti-->
 
 <!-- RUBRICA -->

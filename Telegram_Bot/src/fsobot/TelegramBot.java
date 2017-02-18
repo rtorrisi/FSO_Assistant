@@ -444,7 +444,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
     private void sendEvent(String chatID) {
         String ans = "";
-        ResultSet rs = database.getQueryResult("SELECT nome_concerto, data_concerto, info, nome_città, Provincia FROM Concerti co JOIN Città ci ON co.Città_idCittà = ci.idCittà ORDER BY data_concerto");
+        ResultSet rs = database.getQueryResult("SELECT nome_concerto, data_concerto, info, nome_citta, Provincia FROM Concerti co JOIN Citta ci ON co.Citta_idCitta = ci.idCitta ORDER BY data_concerto");
         
         try{
             while(rs.next()) {
@@ -454,7 +454,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 String month = data.substring(5, 7);
                 String year = data.substring(0, 4);
                 ans += "_Data:_ " + day + "/" + month + "/" + year + "\n";
-                ans += "_Luogo:_ " + rs.getString("nome_città") + " (" + rs.getString("Provincia") + ")\n";
+                ans += "_Luogo:_ " + rs.getString("nome_citta") + " (" + rs.getString("Provincia") + ")\n";
                 ans += "_Info:_ " + rs.getString("info") + "\n\n";
             }
         } catch(SQLException e) { e.getMessage(); }
