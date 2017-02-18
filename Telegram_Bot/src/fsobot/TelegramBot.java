@@ -98,22 +98,23 @@ public class TelegramBot extends TelegramLongPollingBot {
 
                     // ASSENZA E RITARDO #######################################
                     else if(mess.contains("assenza")) {
-                        sendAbsence(username, chatID);
-                        sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha segnalato che mancherà alle prove! 🚨");
+                        boolean result = sendAbsence(username, chatID);
+                        if(result) sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha segnalato che mancherà alle prove!");
+
                     }
-                    else if(mess.contains("annulla_segnalazione")) {
+                    else if(mess.contains("cancella")) {
                         boolean result = removeAbsence(username, chatID);
-                        if(result) sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha rimosso la segnalazione di assenza! 🚨");
-                        else sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha provato senza successo a rimuovere la segnalazione di assenza! 🚨");
+                        if(result) sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha rimosso la segnalazione di assenza!");
+                        else sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha provato senza successo a rimuovere la segnalazione di assenza!");
                     }
                     else if(mess.contains("ritardo")) sendMessage("Desideri aggiungere l'orario previsto di arrivo?", getRitardoKeyboard(), chatID);
                     else if(mess.contains("non aggiungere orario")) {
-                        sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha segnalato che ritarderà alle prove! 🚨");
+                        sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha segnalato che ritarderà alle prove!");
                         sendMessage("Ritardo segnalato! 👍", getMainMenuKeyboard(), chatID);
                     }
                     else if(mess.contains("aggiungi orario")) sendMessage("Inserisci l'orario previsto di arrivo", getOraRitardoKeyboard(),chatID);
                     else if(mess.contains("ore")) {
-                        sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha segnalato che arriverà alle prove alle "+mess+"! 🚨");
+                        sendMessageToAdmin("🚨 "+nome+" "+cognome+" ha segnalato che arriverà alle prove alle "+mess+"!");
                         sendMessage("Orario ritardo segnalato con successo! 👍\n\nHo avvisato che arriverai alle "+mess, getMainMenuKeyboard(), chatID);
                     }
                     //##########################################################
@@ -166,7 +167,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
 // METHODS #############################################################
 
-    private void sendNotRegisteredMessage(String chat_id) { sendMessage("Non sei abilitato a usare questo servizio!\n\nControlla nelle impostazioni di Telegram di aver impostato Nome, Cognome e Username correttamente!\n\nContatta la segreteria per maggiori informazioni!", chat_id); }
+    private void sendNotRegisteredMessage(String chat_id) { sendMessage("Non sei abilitato a usare questo servizio!\n\nControlla nelle impostazioni di Telegram di aver impostato Nome, Cognome e Username correttamente!\n\nOppure contatta la segreteria per essere abilitato ad usare il servizio!", chat_id); }
 
     private void sendMessage(String text, String chat_id) {
             SendMessage sendMessageRequest = new SendMessage();
@@ -313,21 +314,25 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         sendMessage(ans, getMainMenuKeyboard(), chatID);
     }
-    private void sendAbsence(String username, String chatID) {
-        String ans="Assenza";
-
+    private boolean sendAbsence(String username, String chatID) {
         PreparedStatement ps;
         try {
             ps = database.getConnection().prepareStatement("UPDATE Utenti SET assenze=assenze+1 WHERE username=? AND chat_id=?");
             ps.setString(1, username);
 	    ps.setString(2, chatID);
-
-	    if(ps.executeUpdate() == 1) ans+=" inviata con successo! 👍\n\n/annulla_segnalazione per annullare l'assenza segnalata!\n(Verrà segnalato agli amministratori)";
+            
+            if(ps.executeUpdate() == 1) {
+                sendMessage("Assenza inviata con successo! 👍\n\n/cancella per annullare l'assenza segnalata!\n(Verrà segnalato agli amministratori)", getMainMenuKeyboard(), chatID);
+                ps.close();
+                return true;
+            }
             ps.close();
+            return false;
 
-        } catch(SQLException e) { ans+= " NON inviata con successo! 👎";}
-
-        sendMessage(ans, getMainMenuKeyboard(), chatID);
+        } catch(SQLException e) {
+            sendMessage("Assenza NON inviata con successo! 👎", getMainMenuKeyboard(), chatID);
+            return false;
+        }
     }
     private boolean removeAbsence(String username, String chatID) {
         PreparedStatement ps;
@@ -338,6 +343,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
 	    if(ps.executeUpdate() == 1) {
                 sendMessage("Assenza rimossa con successo! 👍", getMainMenuKeyboard(), chatID);
+                ps.close();
                 return true;
             }
             ps.close();

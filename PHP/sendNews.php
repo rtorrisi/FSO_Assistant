@@ -6,10 +6,6 @@ session_start();
 $user = $_SESSION['username'];
 if(!isset($user)) header("Location: ../index.php");
 
-$sql = mysqli_query($conn,"SELECT max(idNews) AS lastID FROM News");
-$row=mysqli_fetch_array($sql);
-$lastID = $row['lastID'];
-
 // DATA NEWS
 $data = date('Y-m-d');
 
@@ -37,12 +33,15 @@ if($_POST){
     }
 
       if($type=="text") {
+        $sql = "INSERT INTO News (news, estensione, data_news, Admin_username) VALUES ('$news', 'testo', '$data', '$login_username')";
+        $conn->query($sql);
+
         $sql = mysqli_query($conn,"SELECT max(idNews) AS ID FROM News");
         $row=mysqli_fetch_array($sql);
         $newsID = $row['ID'];
         $message = "#news".$newsID."\n\n".$news;
 
-        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1";
+        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1 || idUtente=18"; //MODIFICA LISTA QUI
         $rs = $conn->query($sql);
 
           while ($row = $rs->fetch_assoc()) {
@@ -50,13 +49,16 @@ if($_POST){
             if(strlen($result)==0) $sended=0;
           }
 
-        if($sended) {
-          $sql = "INSERT INTO News (news, estensione, data_news, Admin_username) VALUES ('$news', 'testo', '$data', '$login_username')";
+        if(!$sended) {
+          $sql = "DELETE FROM News WHERE idNews=".$newsID;
           $conn->query($sql);
         }
       }
 
       else if($type=="image") {
+        $sql = "INSERT INTO News (news, allegato, estensione, data_news, Admin_username) VALUES ('$news', '$file_to_db', '$ext', '$data','$login_username')";
+        $conn->query($sql);
+
         $sql = mysqli_query($conn,"SELECT max(idNews) AS ID FROM News");
         $row=mysqli_fetch_array($sql);
         $newsID = $row['ID'];
@@ -64,7 +66,7 @@ if($_POST){
 
         $img = curl_file_create('../Data/website_img/file.'.$ext);
 
-        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1";
+        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1 || idUtente=18"; //MODIFICA LISTA QUI
         $rs = $conn->query($sql);
 
         $count=0;
@@ -105,13 +107,16 @@ if($_POST){
           $count++;
         }
 
-        if($sended) {
-          $sql = "INSERT INTO News (news, allegato, estensione, data_news, Admin_username) VALUES ('$news', '$file_to_db', '$ext', '$data','$login_username')";
+        if(!$sended) {
+          $sql = "DELETE FROM News WHERE idNews=".$newsID;
           $conn->query($sql);
         }
       }
 
       else {
+        $sql = "INSERT INTO News (news, allegato, estensione, data_news, Admin_username) VALUES ('$news', '$file_to_db', '$ext', '$data','$login_username')";
+        $conn->query($sql);
+
         $sql = mysqli_query($conn,"SELECT max(idNews) AS ID FROM News");
         $row=mysqli_fetch_array($sql);
         $newsID = $row['ID'];
@@ -119,7 +124,7 @@ if($_POST){
 
         $file = curl_file_create('../Data/website_img/file.'.$ext);
 
-        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1";
+        $sql = "SELECT chat_id FROM Utenti WHERE idUtente=1 || idUtente=18"; //MODIFICA LISTA QUI
         $rs = $conn->query($sql);
 
         $count=0;
@@ -157,8 +162,9 @@ if($_POST){
           }
           $count++;
         }
-        if($sended) {
-          $sql = "INSERT INTO News (news, allegato, estensione, data_news, Admin_username) VALUES ('$news', '$file_to_db', '$ext', '$data','$login_username')";
+
+        if(!$sended) {
+          $sql = "DELETE FROM News WHERE idNews=".$newsID;
           $conn->query($sql);
         }
       }
