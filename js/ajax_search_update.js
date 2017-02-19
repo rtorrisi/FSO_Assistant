@@ -76,6 +76,13 @@ function searchNewsId(row) {
   );
 }
 
+function searchConcertId(row) {
+  window.open(
+  "PHP/concertInfo.php?idConcert="+$(row).attr("id"),
+  "_blank"
+  );
+}
+
 function searchBranoId(row) {
   window.open(
   "PHP/braniInfo.php?idBrano="+$(row).attr("id"),

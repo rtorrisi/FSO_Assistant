@@ -47,7 +47,7 @@ $result = $conn->query($sql);
       $anno = $row['anno'];
       $data = $giorno.'-'.$mese.'-'.$anno;
       $city = $row['nome_citta'];
-      echo '<tr id="'.$idConcerto.'" onclick="searchNewsId(this)"><td>'.$idConcerto.'</td><td><textarea>'.$nomeEvento.'</textarea></td><td>'.$city.'</td><td>'.$data.'</td></tr>';
+      echo '<tr id="'.$idConcerto.'" onclick="searchConcertId(this)"><td>'.$idConcerto.'</td><td><textarea>'.$nomeEvento.'</textarea></td><td>'.$city.'</td><td>'.$data.'</td></tr>';
     }
   } else { echo '<tr><td colspan="5">Nessun risultato trovato. </td></tr>'; }
 
