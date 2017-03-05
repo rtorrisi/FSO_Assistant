@@ -566,23 +566,21 @@ public class TelegramBot extends TelegramLongPollingBot {
 
                 KeyboardRow keyboard1Row = new KeyboardRow();
                     keyboard1Row.add("👤 Profilo");
+                    keyboard1Row.add("📰 News");
                 KeyboardRow keyboard2Row = new KeyboardRow();
-                    keyboard2Row.add("📰 News");
+                    keyboard2Row.add("🅰 Segnala Assenza alle prove");
                 KeyboardRow keyboard3Row = new KeyboardRow();
-                    keyboard3Row.add("🅰 Segnala Assenza alle prove");
+                    keyboard3Row.add("🕗 Segnala Ritardo alle prove");
                 KeyboardRow keyboard4Row = new KeyboardRow();
-                    keyboard4Row.add("🕗 Segnala Ritardo alle prove");
+                    keyboard4Row.add("🎧 Basi");
                 KeyboardRow keyboard5Row = new KeyboardRow();
-                    keyboard5Row.add("🎧 Basi");
-                KeyboardRow keyboard6Row = new KeyboardRow();
-                    keyboard6Row.add("📎 Info");
+                    keyboard5Row.add("📎 Info");
 
             keyboard.add(keyboard1Row);
             keyboard.add(keyboard2Row);
             keyboard.add(keyboard3Row);
             keyboard.add(keyboard4Row);
             keyboard.add(keyboard5Row);
-            keyboard.add(keyboard6Row);
             replyKeyboardMarkup.setKeyboard(keyboard);
 
             return replyKeyboardMarkup;
